@@ -11,6 +11,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
+import javafx.stage.Stage;
 
 import java.util.*;
 import java.util.stream.Collectors;

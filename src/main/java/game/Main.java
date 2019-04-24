@@ -11,7 +11,6 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         GameController controller=new GameController();
         controller.getView().getStage().show();
-        System.out.println("why do you ddo this to me");
     }
 
 
@@ -19,4 +18,3 @@ public class Main extends Application {
         launch(args);
     }
 }
-//

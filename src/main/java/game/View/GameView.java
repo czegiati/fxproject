@@ -50,7 +50,14 @@ public class GameView {
     }
 
     public void setStage(Stage stage) {
+        table=new Group();
+        screen = new VBox();
+        eventLog=new TextArea();
+        menubar=new GameMenuBar();
         this.stage = stage;
+        eventLog.setDisable(true);
+        screen.getChildren().addAll(menubar.get(),table,eventLog);
+        stage.setScene(new Scene(screen));
     }
 
     public TextArea getEventLog() {

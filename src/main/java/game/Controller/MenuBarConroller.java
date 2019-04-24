@@ -1,5 +1,6 @@
 package game.Controller;
 
+import game.Model.Database.XMLManager;
 import game.View.GameMenuBar;
 import game.View.NewGameView;
 import javafx.scene.control.TextField;
@@ -13,6 +14,7 @@ public class MenuBarConroller {
     MenuBarConroller(GameMenuBar menubar,GameController gc){
         this.menubar=menubar;
         this.gamecontroller=gc;
+        XMLManager a=new XMLManager();
         setUp();
     }
 
@@ -35,7 +37,8 @@ public class MenuBarConroller {
                             a.getStage().close();
                             gamecontroller.getView().getStage().close();
                             this.gamecontroller =
-                                    new GameController(a.getAgainstAICheckbox().isSelected()
+                                    new GameController(
+                                             a.getAgainstAICheckbox().isSelected()
                                             , a.getAIvsAI().isSelected()
                                             , a.getAIstarts().isSelected()
                                             , a.getAllDamaRure().isSelected()
@@ -69,7 +72,6 @@ public class MenuBarConroller {
                 && !event.getCharacter().matches("\b")
                 && !Character.isDigit(event.getCharacter().charAt(0) )){
             textfiled.deleteText(textfiled.getText().length()-1,textfiled.getText().length());
-            System.out.println(event.getCode());
         }
     }
 
