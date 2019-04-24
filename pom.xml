@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>hu.czegiati.progtech</groupId>
+    <artifactId>CheckersJavaFX</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>jar</packaging>
+
+    <name>Checkers Javafx</name>
+    <description>A checkers game with gameplay customization features.</description>
+    <url>https://github.com/czegiati/CheckersFX</url>
+
+    <developers>
+        <developer>
+            <name>Czeglédi Attila</name>
+            <id>czegiati</id>
+            <email>czegiati@gmail.com</email>
+            <roles>
+                <role>Developer</role>
+            </roles>
+            <organization>Debreceni Egyetem Informatika Kar</organization>
+            <organizationUrl>http://www.inf.unideb.hu/</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:czegiati/CheckersFX.git</connection>
+        <url>scm:git:git@github.com:czegiati/CheckersFX.git</url>
+        <developerConnection>scm:git:git@github.com:czegiati/CheckersFX.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+
+    <properties>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <additionalparam>-Xdoclint:none</additionalparam>
+
+        <exec.mainClass>game.Main</exec.mainClass>
+        <mainClass>game.Main</mainClass>
+
+        <license.licenseName>apache_v2</license.licenseName>
+
+        <runfx.args>-jar "${project.build.directory}/${project.build.finalName}.jar"</runfx.args>
+
+    </properties>
+
+
+
+
+
+
+</project>
