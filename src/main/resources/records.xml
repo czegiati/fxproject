@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Records>
+  <Record>
+    <Name>a</Name>
+    <Score>40</Score>
+  </Record>
+  <Record>
+    <Name>b</Name>
+    <Score>30</Score>
+  </Record>
+  <Record>
+    <Name>c</Name>
+    <Score>10</Score>
+  </Record>
+  <Record>
+    <Name>d</Name>
+    <Score>6</Score>
+  </Record>
+</Records>
