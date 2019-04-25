@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 
 public class XMLManager {
 
@@ -19,25 +20,25 @@ public class XMLManager {
 
 
     public XMLManager(){
-        loadRecords();
+        loadRecords(recordList);
 
     }
 
-    private void loadRecords(){
-        String input="records.xml";
-        int height=0;
-        String name="";
+    private void loadRecords(ArrayList<Record> list){
+        String input="src/main/resources/records.xml";
         try {
-
             File inputFile = new File(input);
             SAXBuilder saxBuilder = new SAXBuilder();
             Document document = saxBuilder.build(inputFile);
             Element classElement = document.getRootElement();
 
+            for(Element element:classElement.getChildren())
+            {
+                Record record=new Record(element.getChild("Name").getText(),Integer.parseInt(element.getChild("Score").getText()));
+                this.recordList.add(record);
 
 
-
-
+            }
 
         } catch(JDOMException e) {
             e.printStackTrace();
@@ -76,6 +77,83 @@ public class XMLManager {
         } catch(IOException e) {
 
             e.printStackTrace();
+        }
+    }
+
+    public void addRecordtoVisual(Record record){
+        this.recordList.add(record);
+        this.recordList.sort(Comparator.comparing(Record::getScore,Comparator.reverseOrder()));
+    }
+
+    public void refreshHighScoreFile(){
+        ArrayList<Record> loadedRecords=new ArrayList<>();
+        loadRecords(loadedRecords);
+
+
+        if(recordList.stream().filter(o -> !loadedRecords.contains(o)).findFirst().isPresent())
+        {
+            Record newRecord = this.recordList.stream().filter(o -> !loadedRecords.contains(o)).findFirst().get();
+
+            if(loadedRecords.stream().filter(o -> o.getScore()<newRecord.getScore()).findFirst().isPresent())
+            {
+                loadedRecords.remove(loadedRecords.stream().min(Comparator.comparing(Record::getScore)).get());
+                loadedRecords.add(newRecord);
+                replaceRecordInFile(loadedRecords);
+            }
+
+        }
+
+    }
+
+
+    private void replaceRecordInFile(ArrayList<Record> list){
+
+        String input="src/main/resources/records.xml";
+        try {
+            File inputFile = new File(input);
+            SAXBuilder saxBuilder = new SAXBuilder();
+            Document document = saxBuilder.build(inputFile);
+            Element classElement = document.getRootElement();
+
+
+            ArrayList<Record> readElements=new ArrayList<>();
+            for(Element element:classElement.getChildren())
+            {
+                Record record=new Record(element.getChild("Name").getText(),Integer.parseInt(element.getChild("Score").getText()));
+                if(list.stream().filter(o -> o.equals(record)).findFirst().isPresent())
+                {
+                    //list contains the read element
+                    readElements.add(record);
+                }
+                else
+                {
+                    //list does not contain the read element
+                    classElement.removeContent(element);
+                }
+            }
+
+            for(Record rec: list)
+            {
+                if(!readElements.stream().filter(o -> o.equals(rec)).findFirst().isPresent())
+                {
+                    Element element=new Element("Record");
+                    classElement.addContent(element);
+
+                    Element name= new Element("Name");
+                    name.setText(rec.getName());
+
+                    Element score= new Element("Score");
+                    score.setText(rec.getScore().toString());
+
+                    element.addContent(name);
+                    element.addContent(score);
+                }
+            }
+
+        } catch(JDOMException e) {
+            e.printStackTrace();
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
         }
     }
 

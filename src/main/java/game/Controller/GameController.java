@@ -5,14 +5,17 @@ import game.Model.INT;
 import game.Model.Move;
 import game.Model.Tile;
 import game.View.GameView;
+import javafx.animation.*;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
-import javafx.stage.Stage;
 
+import javafx.util.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -45,6 +48,9 @@ public class GameController {
     private boolean AIstartsthegame=false;
     private boolean AIagaintAI=false;
     private ArrayList<Tile> AIMoves=new ArrayList<Tile>();
+
+    private boolean Pause=false;
+    private int AnimationCounter=0;
 
 
 
@@ -156,9 +162,21 @@ public class GameController {
     }
 
     public void setKeys(){
+
+
     this.view.getScreen().getScene().setOnKeyPressed(q ->{
+
         if(q.getCode()== KeyCode.ENTER)
        eventLog.detailedLogWindow();
+
+        if(q.getCode()==KeyCode.P) {
+            if(AIagaintAI) {
+                if (!Pause)
+                    Pause = true;
+                else
+                    Pause = false;
+            }
+        }
     });
 
 
@@ -632,15 +650,16 @@ public class GameController {
         if(AIagaintAI){
             i=turn.value%2;
         }
-        AI(i);
+
+       AI_Aimation(i);
+
+
     }
 
 
     /*
     * To handle the enemies turns. Artificially triggers the input listener.
-    *
     * @param i on which turn should the AI be able to move
-    *
     * */
     private void AI(int i){
 
@@ -711,6 +730,39 @@ public class GameController {
     }
 
 
+    private void AI_Aimation(int i){
+        Timeline timeline=new Timeline();
+
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.getKeyFrames().add(
+                new KeyFrame(Duration.millis(20),
+                        new EventHandler<ActionEvent>() {
+
+                            @Override
+                            public void handle(ActionEvent t) {
+                                AnimationCounter++;
+                                if(AnimationCounter>=10 && !Pause)
+                                {
+                                    AnimationCounter=0;
+                                    AI(i);
+                                   timeline.stop();
+                                }
+                            }
+                        },
+                        new KeyValue[0]) // don't use binding
+        );
+
+        timeline.playFromStart();
+    }
+
+
+
+    private boolean isTraditional(){
+        if(!this.AIagaintAI && againstAI && !this.rule_AllDama && this.rule_forceKill)
+            return true;
+        else
+            return false;
+    }
 
 
 }
