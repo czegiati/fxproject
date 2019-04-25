@@ -5,6 +5,7 @@ import game.Model.INT;
 import game.Model.Move;
 import game.Model.Tile;
 import game.View.GameView;
+
 import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -14,8 +15,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
-
 import javafx.util.Duration;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -180,17 +181,20 @@ public class GameController {
     });
 
 
-        this.view.getTable().setOnMousePressed(e ->{
+    this.view.getTable().setOnMousePressed(e ->{
 
 
-
+            /*
+            * Removes the stroke from every tiles if clicked
+            * */
             Tile target = (Tile) e.getTarget();
-
             tiles.forEach( o -> o.setStroke(null));
             ArrayList<Tile> targetTiles;
             Map<Tile,ArrayList<Move>>targetTilesMap =new HashMap<>();
 
-
+    /*
+    * Generates the list of the possible moves
+    * */
             if(turn.value%2==0) {
                 targetTilesMap=  moveSets.entrySet().stream().filter(o -> opponentsDisks
                         .contains(o.getKey().getDisk()))
@@ -234,6 +238,8 @@ public class GameController {
                 }
 
             }
+
+
 
             if(againstAI)
                 this.AIMoves=targetTiles;
@@ -764,5 +770,9 @@ public class GameController {
             return false;
     }
 
+
+    public TextAreaController getEventLog() {
+        return eventLog;
+    }
 
 }

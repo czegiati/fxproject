@@ -3,6 +3,7 @@ package game.Controller;
 import game.Model.Database.XMLManager;
 import game.View.GameMenuBar;
 import game.View.NewGameView;
+import game.View.ScoreBoard;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
@@ -19,6 +20,8 @@ public class MenuBarConroller {
     }
 
     public void setUp(){
+
+
         menubar.getNewGame().setOnAction(e ->{
             NewGameView a=new NewGameView(this.gamecontroller);
             a.getStage().show();
@@ -61,6 +64,21 @@ public class MenuBarConroller {
                 a.getAIvsAI().setSelected(false);
                 a.getForcekillrule().setSelected(true);
             });
+        });
+
+
+        menubar.getQuit().setOnAction(e ->{
+            this.gamecontroller.getView().getStage().close();
+        });
+
+        menubar.getEventlog().setOnAction(e ->{
+            this.gamecontroller.getEventLog().detailedLogWindow();
+        });
+
+        menubar.getScoreBoard().setOnAction(e ->{
+            ScoreBoard scoreboard=new ScoreBoard();
+            scoreboard.getStage().show();
+
         });
 
 
