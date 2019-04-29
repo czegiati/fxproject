@@ -157,4 +157,7 @@ public class XMLManager {
         }
     }
 
+    public ArrayList<Record> getRecordList() {
+        return recordList;
+    }
 }

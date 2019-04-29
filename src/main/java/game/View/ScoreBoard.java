@@ -12,10 +12,11 @@ public class ScoreBoard {
 
     public ScoreBoard(){
         stage.setTitle("High Scores");
-        stage.setHeight(600);
-        stage.setWidth(140);
+        stage.setAlwaysOnTop(true);
         stage.setScene(new Scene(SceneParent));
         SceneParent.getChildren().add(ListView);
+        ListView.setPrefHeight(400);
+        ListView.setPrefWidth(400);
     }
 
     public javafx.scene.control.ListView<String> getListView() {

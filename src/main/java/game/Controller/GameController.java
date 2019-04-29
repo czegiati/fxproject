@@ -763,7 +763,7 @@ public class GameController {
 
 
 
-    private boolean isTraditional(){
+    public boolean isTraditional(){
         if(!this.AIagaintAI && againstAI && !this.rule_AllDama && this.rule_forceKill)
             return true;
         else
@@ -775,4 +775,28 @@ public class GameController {
         return eventLog;
     }
 
+
+    public int getTablesize() {
+        return tablesize;
+    }
+
+    public boolean isRule_AllDama() {
+        return rule_AllDama;
+    }
+
+    public boolean isRule_forceKill() {
+        return rule_forceKill;
+    }
+
+    public boolean isAgainstAI() {
+        return againstAI;
+    }
+
+    public boolean isAIstartsthegame() {
+        return AIstartsthegame;
+    }
+
+    public boolean isAIagaintAI() {
+        return AIagaintAI;
+    }
 }
