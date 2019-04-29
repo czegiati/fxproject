@@ -5,6 +5,7 @@ import game.Model.Record;
 import game.View.GameMenuBar;
 import game.View.NewGameView;
 import game.View.ScoreBoard;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -13,17 +14,24 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Controls the game's menubar
+ */
 public class MenuBarConroller {
 
     private GameMenuBar menubar;
     private GameController gamecontroller;
 
+    /**
+     * Constructor with parameters
+     * @param menubar The class containing the menubar and its elements in the view
+     * @param gc   The game's main Controller
+     */
     MenuBarConroller(GameMenuBar menubar,GameController gc){
         this.menubar=menubar;
         this.gamecontroller=gc;
@@ -31,9 +39,10 @@ public class MenuBarConroller {
         setUp();
     }
 
+    /**
+     * Configures the menus on the menubar
+     */
     public void setUp(){
-
-
         menubar.getNewGame().setOnAction(e ->{
             NewGameView a=new NewGameView(this.gamecontroller);
             a.getStage().show();
@@ -45,6 +54,7 @@ public class MenuBarConroller {
 
 
             a.getCreate().setOnAction( p-> {
+                if(a.getSizeText().getText().equals("")) a.getSizeText().setText("8");
                     if(Integer.parseInt(a.getSizeText().getText())>=7 && Integer.parseInt(a.getSizeText().getText())<=12){
                             if(a.getAgainstAICheckbox().isSelected() && Integer.parseInt(a.getSizeText().getText()) != 8)
                                 return;
@@ -137,12 +147,17 @@ public class MenuBarConroller {
 
     }
 
-    public void OnlyNumericInput(KeyEvent event, TextField textfiled){
+    /**
+     * Forces the textfield parameter to only accept numeric characters
+     * @param event pressed  event key's code
+     * @param textfield the text field that needs to be configured
+     */
+    public void OnlyNumericInput(KeyEvent event, TextField textfield){
         if(Character.isLetter(event.getCharacter().charAt(0))
                 || Character.isDefined(event.getCharacter().charAt(0))
                 && !event.getCharacter().matches("\b")
                 && !Character.isDigit(event.getCharacter().charAt(0) )){
-            textfiled.deleteText(textfiled.getText().length()-1,textfiled.getText().length());
+            textfield.deleteText(textfield.getText().length()-1,textfield.getText().length());
         }
     }
 

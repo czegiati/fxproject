@@ -1,11 +1,10 @@
 package game.Controller;
 
-import game.Model.Disk;
-import game.Model.INT;
-import game.Model.Move;
-import game.Model.Tile;
+import game.Model.*;
+import game.Model.Database.XMLManager;
 import game.View.GameView;
 
+import game.View.NewRecordView;
 import javafx.animation.*;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -21,7 +20,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-
+/**
+ * Main controller of the game,containing all of its logic
+ */
 public class GameController {
     private int tablesize=8;
 
@@ -54,7 +55,9 @@ public class GameController {
     private int AnimationCounter=0;
 
 
-
+    /**
+     * Constructor without parameters
+     */
     public GameController(){
         Tile.setTileSize(70);
         Disk.setDiskRange(Tile.getTilesize()/2-Tile.getTilesize()/12);
@@ -74,6 +77,15 @@ public class GameController {
 
     }
 
+    /**
+     * Constructor with parameters
+     * @param vsai              configuration determining if artificial intelligence should be used
+     * @param aivsai            configuration determining if both players should be artificial
+     * @param aistarts          configuration determining which player is artificial
+     * @param rule_AllDama      configuration determining if all pieces should be kings
+     * @param rule_forceKill    configuration determining if players should be forced to capture the opponent's pieces if it is passible in that turn
+     * @param tablesize         the size of the board
+     */
     public GameController(boolean vsai,boolean aivsai, boolean aistarts,boolean rule_AllDama,boolean rule_forceKill, int tablesize){
         this.tablesize=tablesize;
         this.rule_forceKill=rule_forceKill;
@@ -100,9 +112,9 @@ public class GameController {
 
     }
 
-
-
-
+    /**
+     * Generates the board and the pieces
+     */
     public void generateTableContent(){
 
         for(int y=0; y<tablesize; y++) {
@@ -142,7 +154,9 @@ public class GameController {
         }
     }
 
-
+    /**
+     * Makes the tooltips for the board's tiles
+     */
     public void setTooltips(){
         tiles.stream().forEach( o->{
             o.getTooltip().setStyle(
@@ -162,13 +176,16 @@ public class GameController {
 
     }
 
+    /**
+     * Sets up the inputs for the game
+     * P - pauses the game in an AI against AI game
+     * Mouse - sets up the games main controls
+     */
     public void setKeys(){
 
 
     this.view.getScreen().getScene().setOnKeyPressed(q ->{
 
-        if(q.getCode()== KeyCode.ENTER)
-       eventLog.detailedLogWindow();
 
         if(q.getCode()==KeyCode.P) {
             if(AIagaintAI) {
@@ -184,7 +201,7 @@ public class GameController {
     this.view.getTable().setOnMousePressed(e ->{
 
 
-            /*
+            /**
             * Removes the stroke from every tiles if clicked
             * */
             Tile target = (Tile) e.getTarget();
@@ -192,7 +209,7 @@ public class GameController {
             ArrayList<Tile> targetTiles;
             Map<Tile,ArrayList<Move>>targetTilesMap =new HashMap<>();
 
-    /*
+    /**
     * Generates the list of the possible moves
     * */
             if(turn.value%2==0) {
@@ -204,7 +221,6 @@ public class GameController {
                 if(targetTilesMap.values().stream().filter(o -> o.stream().filter( q-> q.getKilledIfMoved()!=null).findFirst().isPresent()).findFirst().isPresent()
                  && rule_forceKill)
                 {
-                    // must kill an enemy
                     targetTilesMap.values().forEach( value -> {
                        for(Move m: value)
                        {
@@ -225,7 +241,7 @@ public class GameController {
                 if(targetTilesMap.values().stream().filter(o -> o.stream().filter( q-> q.getKilledIfMoved()!=null).findFirst().isPresent()).findFirst().isPresent()
                 && rule_forceKill)
                 {
-                    // must kill an enemy
+                    /** must kill an enemy*/
                     targetTilesMap.values().forEach( value -> {
                         for(Move m: value)
                         {
@@ -244,19 +260,19 @@ public class GameController {
             if(againstAI)
                 this.AIMoves=targetTiles;
 
-            /*
+            /**
             * Killstrike: if a disk preformed a kill and is able to preform another (from its new position),
             * then instead of ending its turn,
             * it will continue to preform kills, until its out of kills to have
             */
             if(killStrikeTile!=null)
             {
-                //remove every move that is not starts from the killer disks position
+                /**remove every move that is not starts from the killer disks position*/
                 this.moveSets.entrySet().stream().filter( o -> o.getKey()!=killStrikeTile).forEach(q -> {
                     q.getValue().clear();
                 });
 
-                //make every move unusable where the player doesnt preform a kill
+                /**make every move unusable where the player doesnt preform a kill*/
                 for(Move m: moveSets.get(killStrikeTile))
                 {
                     if(m.getKilledIfMoved()==null){
@@ -265,21 +281,23 @@ public class GameController {
                 }
             }
 
-            //execute selected move
+            /**execute selected move*/
             if(this.selectedTile!=null)
             {
-                //see if such move exists in moveSets
+                /**see if such move exists in moveSets*/
                 if(moveSets.get(selectedTile).stream().filter(o -> o.getMoveTo()==target).findFirst().isPresent())
                 {
                     moveSets.get(selectedTile).stream().filter(o -> o.getMoveTo()==target).findFirst().get().execute(selectedTile);
 
-                    //see if move resulted in a kill
-                    //if it did, then
-                    //see if it triggers a killstrike or not
+                        /**
+                        * see if move resulted in a kill
+                        * if it did, then
+                        * see if it triggers a killstrike or not
+                        */
                     if(moveSets.get(selectedTile).stream().filter(o -> o.getMoveTo()==target).findFirst().get().getKilledIfMoved()==null) {
-                        /*
+                        /**
                         * If no kill happens then it ends the killstrike, and ends the turn
-                        * */
+                        */
                         eventLog.append("\t Selected disk moves to ("
                                 +target.getTileX()+","+target.getTileY()+").");
                         this.killStrikeTile=null;
@@ -287,9 +305,9 @@ public class GameController {
                     }
                     else
                     {
-                        /*
+                        /**
                         * If a kill happend then it examines if a killstrike can be started
-                        * */
+                        */
                         this.moveSets.clear();
                         tiles.forEach( o ->{
                             this.setMoveSets(o);
@@ -297,7 +315,7 @@ public class GameController {
                         if(moveSets.entrySet().stream().filter(o -> o.getKey()==target && o.getValue().stream()
                                 .filter( q -> q.getKilledIfMoved()!= null).findFirst().isPresent())
                         .findFirst().isPresent()) {
-                            /*
+                            /**
                             *We start the killstrike by calling the nextturn() function and reducing the number of turns,
                             * basicly giving another move to the player
                             * We make the clicked tile( new position if selected Disk) the killStrike target,
@@ -317,7 +335,7 @@ public class GameController {
                             nextTurn();
                         }
                         else {
-                            /*
+                            /**
                             *If we cannot preform a new kill from the new position, the we end
                             * the turn and end the killstrike
                             * */
@@ -339,11 +357,11 @@ public class GameController {
             }
 
 
-            /*
+            /**
             * If targetTileList(which contains the tiles of the moves, which we can preform),
             * contains the clicked tile, we make the moves, which we can preform from the clicked tile,
              * visible by adding a red stroke to their target tile
-            * */
+             */
             if(target.getDisk()!=null && targetTiles.contains(target) && !gameOver)
             {
                     eventLog.append("\t Player selected Disk at ("+target.getTileX()+","+target.getTileY()+"),"
@@ -366,15 +384,18 @@ public class GameController {
         });
     }
 
-
+    /**
+     * The view's getter
+     * @return returns the game's main view
+     */
     public GameView getView() {
         return view;
     }
 
-    public void setView(GameView view) {
-        this.view = view;
-    }
-
+    /**
+     * Generates the moves the player can make from the given tile
+     * @param tile the tile we want to generate the movements for
+     */
     private void setMoveSets(Tile tile)
     {
         moveSets.put(tile,new ArrayList<>());
@@ -407,8 +428,6 @@ public class GameController {
                         } else {
 
                             if (o.getTileX() == tile.getTileX() - (2 * i)) {
-                                /*see if the disk-to-be-killed is present on the  left
-                                 * */
                                 if (o.getDisk() == null && isPresent(o.getTileX() + i, o.getTileY() + i)) {
                                     if (get(o.getTileX() + i, o.getTileY() + i).getDisk() != null &&
                                             !isInTheSameTeam(tile.getDisk(), get(o.getTileX() + i, o.getTileY() + i).getDisk())) {
@@ -417,8 +436,6 @@ public class GameController {
                                 }
                             }
 
-                            /*see if the  disk-to-be-killed tis present onn the right
-                             * */
                             else if (o.getTileX() == tile.getTileX() + (2 * i)) {
                                 if (o.getDisk() == null && isPresent(o.getTileX() - i, o.getTileY() + i)) {
                                     if (get(o.getTileX() - i, o.getTileY() + i).getDisk() != null &&
@@ -430,7 +447,7 @@ public class GameController {
                     });
         }
 
-            else    //DISK IS DAMA
+            else
         {
             Tile checked;
             for (int x = -1, y = -1;x==-1; x--, y--) {
@@ -542,19 +559,17 @@ public class GameController {
         }
         }
 
-
-      /*
+     /**
       * @param x: tile's X coordinate in table
       * @param y: tile's Y coordinate in table
       * @returns the tile with the given coordinates
-    * */
+      */
     private Tile get(int x,int y)
     {
        return this.tiles.stream().filter(o -> o.getTileX().equals(x) && o.getTileY().equals(y)).findFirst().get();
     }
 
-
-    /*
+    /**
     * @param x: tile's X coordinate in table
     * @param y: tile's Y coordinate in table
     * @return returns true, if such tile exists
@@ -564,6 +579,11 @@ public class GameController {
         return this.tiles.stream().filter(o -> o.getTileX().equals(x) && o.getTileY().equals(y)).findFirst().isPresent();
     }
 
+    /**
+     * @param one first piece to compare
+     * @param two  second piece, which the first should be compared to
+     * @return decides whether or not the two pieces are from the same team
+     */
     private boolean isInTheSameTeam(Disk one,Disk two){
         if((this.playersDisks.contains(one) && this.playersDisks.contains(two))
         || (this.opponentsDisks.contains(one) && this.opponentsDisks.contains(two)))
@@ -573,16 +593,12 @@ public class GameController {
         else
             return false;
     }
-
-
-
-
-    /*nextTurn() is used to:
-    *   visually remove/modify elements from/on the screen
-    *   check if game-ending conditions are met
-    *   generate movements for the new turn
-    *   and of course end the turn/give the turn to the other player (which is being examined via checking the turn variable)
-    * */
+    /**
+     * visually remove/modify elements from/on the screen,
+     * check if game-ending conditions are met,
+     * generate movements for the new turn,
+     * and of course end the turn/give the turn to the other player (which is being examined via checking the turn variable)
+     */
     private void nextTurn(){
 
         for(Tile tile:this.tiles)
@@ -596,10 +612,8 @@ public class GameController {
 
 
         moveSets.clear();
-        // generating new movement sets
         tiles.forEach( o -> this.setMoveSets(o));
 
-        //remove already killed disks
         opponentsDisks.stream().forEach(o -> {
             if(!tiles.stream().filter(e -> e.getDisk()==o).findFirst().isPresent())
             {
@@ -614,7 +628,6 @@ public class GameController {
             }
         });
 
-        //generate movements into a list
         List<Tile> playerMoveStartTiles=moveSets.entrySet().stream().filter(o -> !o.getValue().isEmpty())
                 .filter(o -> playersDisks.contains(o.getKey().getDisk()))
                 .map(p -> p.getKey())
@@ -625,26 +638,83 @@ public class GameController {
                 .map(p -> p.getKey())
                 .collect(Collectors.toList());
 
-        //see if player(black) can still move, if not, player loses
         if(playerMoveStartTiles.isEmpty() && turn.value%2==0){
             gameOver=true;
             playerWon=false;
-            eventLog.append("\t Player Won in:"+turn.value+"turns");
-            return;
+
         }
-        //see if opponent(white) can still move
         else if(opponentMoveStartTiles.isEmpty() && turn.value%2==1)
         {
             playerWon=true;
             gameOver=true;
             eventLog.append("\t Player Won in:"+turn.value+" turns");
-            return;
         }
 
+        if(gameOver && playerMoveStartTiles.isEmpty() && isTraditional())
+        {
+            XMLManager manager=new XMLManager();
+            int aliveDisks=0;
+            for(Tile tile:tiles)
+            {
+                if(opponentsDisks.contains(tile.getDisk()))
+                {
+                    aliveDisks++;
+                }
+            }
+            NewRecordView view=new NewRecordView((int)(100-turn.value/3)+aliveDisks*2);
+            if(manager.isHighEnough(new Record("", (int)(100-turn.value/3)+aliveDisks*2))&& AIstartsthegame)
+            {
+                view.getCreate().setOnAction(e ->{
+                    Record a=new Record(view.getSizeText().getText(),view.getScore());
+                    manager.addRecord(a);
+                    view.getStage().close();
+                });
+            }
+            else
+            {
+                view.getCreate().setDisable(true);
+            }
+
+            view.getStage().show();
+        }
+        else if(gameOver && opponentMoveStartTiles.isEmpty() && isTraditional())
+        {
+            XMLManager manager=new XMLManager();
+            int aliveDisks=0;
+            for(Tile tile:tiles)
+            {
+                if(playersDisks.contains(tile.getDisk()))
+                {
+                    aliveDisks++;
+                }
+            }
+            NewRecordView view=new NewRecordView((int)(100-turn.value/3)+aliveDisks*2);
+
+            if(manager.isHighEnough(new Record("", (int)(100-turn.value/3)+aliveDisks*2)) && !AIstartsthegame)
+            {
+
+                view.getCreate().setOnAction(e ->{
+                    Record a=new Record(view.getSizeText().getText(),view.getScore());
+                    manager.addRecord(a);
+                    view.getStage().close();
+                });
+            }
+            else
+                {
+                view.getCreate().setDisable(true);
+            }
+            view.getClose().setOnAction(e ->{view.getStage().close();});
+
+
+            view.getStage().show();
+        }
+
+        if(gameOver){return;}
 
 
 
-        /* give controls to opponent */
+
+        /** give controls to opponent */
 
         turn.value++;
 
@@ -662,31 +732,30 @@ public class GameController {
 
     }
 
-
-    /*
+    /**
     * To handle the enemies turns. Artificially triggers the input listener.
     * @param i on which turn should the AI be able to move
     * */
     private void AI(int i){
 
         if(againstAI&& turn.value%2==i){
-            /*
+            /**
             * It selects a tile that does not contains a disk,at first, so the AIMoves containing the clickable tiles
             * can be generated, and saved
-            * */
+            */
             boolean disrupted=false;
             Tile temp=tiles.stream().filter(o -> o.getDisk()==null).findFirst().get();
             Event.fireEvent(temp, MouseEvent(temp));
 
             Random randomGen=new Random();
 
-            /*
+            /**
             * We pick a random tile from AIMoves, and trigger a click on it (the tile gets selected)
             * we examine if its disk can move. If not, then we keep regeneration it, until it has at least a move.
             *
             * Important: It cannot be an infinite cycle, because in nextTurn() method, we already made sure
             * the game ends if a player cannot make a move
-            * */
+            */
             int selectedIndex=randomGen.nextInt(AIMoves.size());
             while(moveSets.get(AIMoves.get(selectedIndex)).stream().filter( o -> o.getMoveTo()!=null).count()<1)
                 {
@@ -698,7 +767,7 @@ public class GameController {
             Event.fireEvent(selected, MouseEvent(selected));
 
 
-            /*
+            /**
             * We dig through the moveSets to see, we can still move with our selected disk
             * if not, then the whole process start again...
             * */
@@ -708,7 +777,7 @@ public class GameController {
                 AI(i);
             }
 
-            /*
+            /**
             * We keep picking a random move from the list of moves of the selected disk
             * until we find one that can be played
             *
@@ -723,7 +792,7 @@ public class GameController {
             }
     }
 
-    /*
+    /**
     * Completely useless in terms of game mechanics, but helps keeping the code somewhat cleaner.
     * Used to create MouseEvent with a single parameter.
     * @param tile: uses the tile's coordinates to generate a MouseEvent
@@ -735,7 +804,10 @@ public class GameController {
                 true, true, true, true, true, true, null);
     }
 
-
+    /**
+     * delays the AI's moves
+     * @param i 0 or 1 determining which player's turn is it
+     */
     private void AI_Aimation(int i){
         Timeline timeline=new Timeline();
 
@@ -762,7 +834,10 @@ public class GameController {
     }
 
 
-
+    /**
+     * Whether or not the game is set according to the original rules
+     * @return true if has the same rules as the original game
+     */
     public boolean isTraditional(){
         if(!this.AIagaintAI && againstAI && !this.rule_AllDama && this.rule_forceKill)
             return true;
@@ -770,32 +845,58 @@ public class GameController {
             return false;
     }
 
-
+    /**
+     * EventLog's getter
+     * @return returns EventLog
+     */
     public TextAreaController getEventLog() {
         return eventLog;
     }
 
-
+    /**
+     * Tablesize's getter
+     * @return returns the size of the board
+     */
     public int getTablesize() {
         return tablesize;
     }
 
+    /**
+     * Rule_AllDama field's getter
+     * @return whether the AllDamaRule is active
+     */
     public boolean isRule_AllDama() {
         return rule_AllDama;
     }
 
+    /**
+     * Rule_forceKill's getter
+     * @return whether the forceKill rule is active
+     */
     public boolean isRule_forceKill() {
         return rule_forceKill;
     }
 
+    /**
+     * AIvsAI's getter
+     * @return whether the AI should be used or not
+     */
     public boolean isAgainstAI() {
         return againstAI;
     }
 
+    /**
+     * AIstartsthegame's getter
+     * @return whether the AI can start the game or not
+     */
     public boolean isAIstartsthegame() {
         return AIstartsthegame;
     }
 
+    /**
+     * AIagainstAI's getter
+     * @return whether or not the AI is playing against itself
+     */
     public boolean isAIagaintAI() {
         return AIagaintAI;
     }

@@ -80,81 +80,28 @@ public class XMLManager {
         }
     }
 
-    public void addRecordtoVisual(Record record){
-        this.recordList.add(record);
+    public void addRecord(Record record){
         this.recordList.sort(Comparator.comparing(Record::getScore,Comparator.reverseOrder()));
+        if(this.isHighEnough(record))
+        refreshHighScoreFile(record);
     }
 
-    public void refreshHighScoreFile(){
-        ArrayList<Record> loadedRecords=new ArrayList<>();
-        loadRecords(loadedRecords);
-
-
-        if(recordList.stream().filter(o -> !loadedRecords.contains(o)).findFirst().isPresent())
-        {
-            Record newRecord = this.recordList.stream().filter(o -> !loadedRecords.contains(o)).findFirst().get();
-
-            if(loadedRecords.stream().filter(o -> o.getScore()<newRecord.getScore()).findFirst().isPresent())
-            {
+    public void refreshHighScoreFile(Record newRecord){
+        ArrayList<Record> loadedRecords;
+        loadedRecords=this.recordList;
+        if(loadedRecords.size()+1>10)
                 loadedRecords.remove(loadedRecords.stream().min(Comparator.comparing(Record::getScore)).get());
                 loadedRecords.add(newRecord);
-                replaceRecordInFile(loadedRecords);
-            }
-
-        }
+                saveRecords();
 
     }
 
 
-    private void replaceRecordInFile(ArrayList<Record> list){
-
-        String input="src/main/resources/records.xml";
-        try {
-            File inputFile = new File(input);
-            SAXBuilder saxBuilder = new SAXBuilder();
-            Document document = saxBuilder.build(inputFile);
-            Element classElement = document.getRootElement();
-
-
-            ArrayList<Record> readElements=new ArrayList<>();
-            for(Element element:classElement.getChildren())
-            {
-                Record record=new Record(element.getChild("Name").getText(),Integer.parseInt(element.getChild("Score").getText()));
-                if(list.stream().filter(o -> o.equals(record)).findFirst().isPresent())
-                {
-                    //list contains the read element
-                    readElements.add(record);
-                }
-                else
-                {
-                    //list does not contain the read element
-                    classElement.removeContent(element);
-                }
-            }
-
-            for(Record rec: list)
-            {
-                if(!readElements.stream().filter(o -> o.equals(rec)).findFirst().isPresent())
-                {
-                    Element element=new Element("Record");
-                    classElement.addContent(element);
-
-                    Element name= new Element("Name");
-                    name.setText(rec.getName());
-
-                    Element score= new Element("Score");
-                    score.setText(rec.getScore().toString());
-
-                    element.addContent(name);
-                    element.addContent(score);
-                }
-            }
-
-        } catch(JDOMException e) {
-            e.printStackTrace();
-        } catch(IOException ioe) {
-            ioe.printStackTrace();
-        }
+    public boolean isHighEnough(Record record)
+    {
+            if(recordList.stream().min(Comparator.comparing(Record::getScore)).get().getScore()<record.getScore() || this.recordList.size()<10)
+            return true;
+            else return false;
     }
 
     public ArrayList<Record> getRecordList() {

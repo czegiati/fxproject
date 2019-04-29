@@ -6,12 +6,20 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
+/**
+ * Used to store and read previous actions in the game
+ */
 public class TextAreaController {
     TextArea textArea;
     boolean whiteplayer = true;
     String allText= new String("");
     INT turn;
 
+    /**
+     * Constructor with parameters
+     * @param area lists the previous event
+     * @param turn current turn
+     */
     TextAreaController(TextArea area, INT turn) {
         this.textArea = area;
         textArea.setStyle("-fx-opacity: 1.0;");
@@ -19,6 +27,10 @@ public class TextAreaController {
         this.turn=turn;
     }
 
+    /**
+     * Appends to the end of the
+     * @param string current events discretion
+     */
     public void append(String string) {
         if (turn.value%2==0)
         {
@@ -33,6 +45,10 @@ public class TextAreaController {
                 this.textArea.setScrollTop(Double.MAX_VALUE);
             }
 }
+
+    /**
+     * Creates a new window containing a Text Area describing the current game's events until this point
+     */
     public void detailedLogWindow(){
         Stage stage=new Stage();
         stage.setScene(new Scene(new HBox(new TextArea(allText))));

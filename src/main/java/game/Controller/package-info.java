@@ -1,4 +1,4 @@
-/*
+/**
 * Controller classes
 *   Contains the games controller classes
 */

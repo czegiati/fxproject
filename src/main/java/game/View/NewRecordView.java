@@ -1,6 +1,6 @@
 package game.View;
 
-import game.Controller.GameController;
+
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -10,58 +10,44 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import static javafx.geometry.Pos.CENTER;
 
 public class NewRecordView {
     Stage stage=new Stage();
     GridPane grid=new GridPane();
-    GameController controller;
+    Integer score;
+    TextField nameText=new TextField();
 
-    TextField sizeText=new TextField();
-    CheckBox againstAICheckbox=new CheckBox();
-    CheckBox AIstarts=new CheckBox();
-    CheckBox AIvsAI=new CheckBox();
-    CheckBox allDamaRure=new CheckBox();
-    CheckBox forcekillrule=new CheckBox();
+    Button create=new Button("Add");
+    Button close = new Button("Cancel");
 
-    Button create=new Button("Create");
-    Button close = new Button("Close");
-    Button setScored=new Button ("Traditional");
-
-    public NewRecordView(GameController controller){
-        this.controller=controller;
+    public NewRecordView(Integer score){
+        this.score=score;
         stage.setScene(new Scene(grid));
-        stage.setTitle("Creating new game...");
+        stage.setTitle("New HighScore");
 
         grid.setHgap(10);
         grid.setHgap(10);
 
-        Text text1=new Text("Board size:");
+        Text text1=new Text("Name:");
         grid.add(text1,0,0);
-        grid.add(sizeText,1,0);
-        sizeText.appendText("8");
-        sizeText.setAlignment(CENTER);
-        sizeText.setPrefWidth(40);
+        grid.add(nameText,1,0);
+        //nameText.setText("Player");
+        nameText.setAlignment(CENTER);
+
+        Text text2=new Text("Score:");
+        grid.add(text2,0,1);
+        grid.add(new Text(score.toString()),1,1);
 
 
         HBox pane =new HBox(15);
-        pane.getChildren().addAll(create,close,setScored);
-
-        setScored.setTooltip(new Tooltip("Sets the game up according to the game's original rules.\n" +
-                                                "You can get onto the High Score Board if you play in this mode."));
-        setScored.getTooltip().setShowDuration(Duration.INDEFINITE);
-        setScored.getTooltip().setShowDelay(Duration.millis(0));
-
-
-        grid.add(pane,0,8,2,1);
+        pane.getChildren().addAll(create,close);
+        pane.setAlignment(CENTER);
 
 
 
-
-
-
+        grid.add(pane,0,2,2,1);
 
         grid.setAlignment(CENTER);
         grid.setPadding(new Insets(10, 10, 10, 10));
@@ -78,37 +64,8 @@ public class NewRecordView {
         return stage;
     }
 
-
-    public GridPane getGrid() {
-        return grid;
-    }
-
-    public GameController getController() {
-        return controller;
-    }
-
     public TextField getSizeText() {
-        return sizeText;
-    }
-
-    public CheckBox getAgainstAICheckbox() {
-        return againstAICheckbox;
-    }
-
-    public CheckBox getAIstarts() {
-        return AIstarts;
-    }
-
-    public CheckBox getAIvsAI() {
-        return AIvsAI;
-    }
-
-    public CheckBox getAllDamaRure() {
-        return allDamaRure;
-    }
-
-    public CheckBox getForcekillrule() {
-        return forcekillrule;
+        return nameText;
     }
 
     public Button getCreate() {
@@ -119,7 +76,7 @@ public class NewRecordView {
         return close;
     }
 
-    public Button getSetScored() {
-        return setScored;
+    public Integer getScore() {
+        return score;
     }
 }

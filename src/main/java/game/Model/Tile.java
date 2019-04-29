@@ -4,6 +4,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+/**
+ * Graphical and logical component of the board
+ */
 public class Tile extends Rectangle {
     private static Integer tilesize;
     private Integer TileX;
@@ -13,6 +16,11 @@ public class Tile extends Rectangle {
     private Disk disk=null;
     private Tooltip tooltip;
 
+    /**
+     * Constructor with parameters
+     * @param x column of tile
+     * @param y row of tile
+     */
     public Tile(int x,int y){
         this.TileX=x;
         this.TileY=y;
@@ -35,64 +43,77 @@ public class Tile extends Rectangle {
         tooltip=new Tooltip("Tile:("+x+","+y+")");
     }
 
+    /**
+     * Changes the size of every tile
+     * @param size new size of every tile
+     */
     public static void setTileSize(int size){
         tilesize=size;
     }
 
+    /**
+     * tilesize' getter
+     * @return size of every tile
+     */
     public static Integer getTilesize() {
         return tilesize;
     }
 
-    public static void setTilesize(Integer tilesize) {
-        Tile.tilesize = tilesize;
-    }
-
+    /**
+     * Center position of the tile, getter
+     * @returnCenter position of the tile,X coordinate
+     */
     public double getCenterX() {
         return CenterX;
     }
 
-    public void setCenterX(double centerX) {
-        CenterX = centerX;
-    }
-
+    /**
+     * Center position of the tile,getter
+     * @returnCenter position of the tile,Y coordinate
+     */
     public double getCenterY() {
         return CenterY;
     }
 
-    public void setCenterY(double centerY) {
-        CenterY = centerY;
-    }
-
+    /**
+     * Position on board
+     * @return column of tile on board
+     */
     public Integer getTileX() {
         return TileX;
     }
 
-    public void setTileX(Integer tileX) {
-        TileX = tileX;
-    }
-
+    /**
+     * Position on board
+     * @return row of tile on board
+     */
     public Integer getTileY() {
         return TileY;
     }
 
-    public void setTileY(Integer tileY) {
-        TileY = tileY;
-    }
-
+    /**
+     * getter of contained disk
+     * @return contained disk
+     */
     public Disk getDisk() {
         return disk;
     }
 
+    /**
+     * Sets a disk on this tile
+     * @param disk new contained disk
+     */
     public void setDisk(Disk disk) {
         this.disk = disk;
 
     }
 
+    /**
+     * Getter of tooltip
+     * @return returns the tiles tooltip
+     */
     public Tooltip getTooltip() {
         return tooltip;
     }
 
-    public void setTooltip(Tooltip tooltip) {
-        this.tooltip = tooltip;
-    }
 }

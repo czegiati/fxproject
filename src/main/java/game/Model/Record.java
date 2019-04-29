@@ -1,30 +1,42 @@
 package game.Model;
 
+/**
+ * Record for scoreboard
+ */
 public class Record {
     String name;
     Integer score;
 
+    /**
+     * Records constructor with parameters
+     * @param name name of the record
+     * @param score achieved score
+     */
     public Record(String name, Integer score){
     this.name=name;
     this.score=score;
     }
 
+    /**
+     * name's getter
+     * @return name of the record
+     */
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
+    /**
+     * score's getter
+     * @return value of score
+     */
     public Integer getScore() {
         return score;
     }
 
-    public void setScore(Integer score) {
-        this.score = score;
-    }
-
+    /**
+     * Record in String form
+     * @return readable String form of record
+     */
     @Override
     public String toString() {
         return "{" +

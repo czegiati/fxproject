@@ -1,19 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Records>
   <Record>
-    <Name>affffffffffffffffffffffffffffffffffffffffffffffffffffffff</Name>
+    <Name>Mister 100</Name>
+    <Score>100</Score>
+  </Record>
+  <Record>
+    <Name>Just a guy</Name>
+    <Score>67</Score>
+  </Record>
+  <Record>
+    <Name>Woof</Name>
     <Score>40</Score>
   </Record>
   <Record>
-    <Name>b</Name>
-    <Score>30</Score>
+    <Name>WW</Name>
+    <Score>37</Score>
   </Record>
   <Record>
-    <Name>c</Name>
-    <Score>10</Score>
+    <Name>Gamer Guy</Name>
+    <Score>300</Score>
   </Record>
   <Record>
-    <Name>d</Name>
-    <Score>6</Score>
+    <Name>Monkey</Name>
+    <Score>11</Score>
+  </Record>
+  <Record>
+    <Name>Catto</Name>
+    <Score>7</Score>
+  </Record>
+  <Record>
+    <Name>Ronald McDonald</Name>
+    <Score>201</Score>
+  </Record>
+  <Record>
+    <Name>Mr Basic</Name>
+    <Score>24</Score>
+  </Record>
+  <Record>
+    <Name>McWinner</Name>
+    <Score>107</Score>
   </Record>
 </Records>
