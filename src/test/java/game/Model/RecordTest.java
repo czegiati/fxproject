@@ -1,28 +1,30 @@
 package game.Model;
 
-import org.junit.Before;
-import org.junit.Test;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class RecordTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class RecordTest {
 
     private Record testRecord;
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         testRecord=new Record("Name",1);
     }
 
     @Test
-    public void getName() {
+    void getName() {
         assertEquals("Name", testRecord.getName());
     }
 
     @Test
-    public void getScore() {
+    void getScore() {
         Integer i=1;
         assertEquals(i, testRecord.getScore());
     }
+
 
 
 }

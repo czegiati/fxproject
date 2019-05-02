@@ -1,6 +1,7 @@
 package game.Model.Database;
 
 import game.Model.Record;
+
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -11,6 +12,8 @@ import org.jdom2.output.XMLOutputter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -22,7 +25,7 @@ public class XMLManager {
      * List of records.
      */
     ArrayList<Record> recordList=new ArrayList<>();
-
+     private static String input= "records.xml";
     /**
      * Constructor without parameters
      */
@@ -36,7 +39,7 @@ public class XMLManager {
      * @param list Where to load the records.
      */
     private void loadRecords(ArrayList<Record> list){
-        String input="src/main/resources/records.xml";
+
         try {
             File inputFile = new File(input);
             SAXBuilder saxBuilder = new SAXBuilder();
@@ -62,7 +65,7 @@ public class XMLManager {
      * Saves the records into a xml file.
      */
     private void saveRecords(){
-        String outputPath="src/main/resources/records.xml";
+
         try{
             Element Records = new Element("Records");
             Document doc = new Document(Records);
@@ -86,7 +89,7 @@ public class XMLManager {
             XMLOutputter xmlOutput = new XMLOutputter();
 
             xmlOutput.setFormat(Format.getPrettyFormat());
-            xmlOutput.output(doc, new FileWriter(outputPath));
+            xmlOutput.output(doc, new FileWriter(input));
 
         } catch(IOException e) {
 

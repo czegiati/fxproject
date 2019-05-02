@@ -1,26 +1,22 @@
 package game.Model.Database;
 
 import game.Model.Record;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-
-import static org.junit.Assert.*;
-
-public class XMLManagerTest {
+class XMLManagerTest {
 
     private XMLManager manager=new XMLManager();
 
     @Test
-    public void addRecord() {
+    void addRecord() {
         Integer size=manager.getRecordList().size();
         manager.addRecord(new Record("rec",-1));
         assertEquals(size+0, manager.getRecordList().size());
     }
 
     @Test
-    public void isHighEnough() {
+    void isHighEnough() {
         Record a=new Record("a",-1);
         assertEquals(false,manager.isHighEnough(a));
     }

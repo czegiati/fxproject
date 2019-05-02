@@ -15,6 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
+import org.pmw.tinylog.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -111,6 +112,7 @@ public class GameController {
      * Constructor without parameters
      */
     public GameController(){
+        this.view.getStage().setTitle("CheckersFX");
         Tile.setTileSize(70);
         Disk.setDiskRange(Tile.getTilesize()/2-Tile.getTilesize()/12);
         generateTableContent();
@@ -124,8 +126,13 @@ public class GameController {
         setTooltips();
         setKeys();
         nextTurn();
-
-
+        Logger.info("Game has been set up.");
+        this.getView().getStage().setOnHidden(e ->{
+            if(this.gameOver)
+            Logger.info("Stage Closed");
+            else
+                Logger.info("Stage closed before the game ended");
+        });
 
     }
 
@@ -139,6 +146,7 @@ public class GameController {
      * @param tablesize         the size of the board
      */
     public GameController(boolean vsai,boolean aivsai, boolean aistarts,boolean rule_AllDama,boolean rule_forceKill, int tablesize){
+        this.view.getStage().setTitle("CheckersFX");
         this.tablesize=tablesize;
         this.rule_forceKill=rule_forceKill;
         this.rule_AllDama=rule_AllDama;
@@ -159,8 +167,14 @@ public class GameController {
         setTooltips();
         setKeys();
         nextTurn();
+        Logger.info("Game has been set up.");
 
-
+        this.getView().getStage().setOnHidden(e ->{
+            if(this.gameOver)
+                Logger.info("Stage Closed");
+            else
+                Logger.info("Stage closed before the game ended");
+        });
 
     }
 
@@ -204,6 +218,7 @@ public class GameController {
                 }
             }
         }
+        Logger.info("Gameboard has been created.");
     }
 
     /**
@@ -615,7 +630,7 @@ public class GameController {
       * For accessing the tile of the board a the given X and Y coordinates.
       * @param x : tile's X coordinate in table
       * @param y : tile's Y coordinate in table
-      * @returns the tile with the given coordinates
+      * @return the tile with the given coordinates
       */
     private Tile get(int x,int y)
     {
@@ -695,12 +710,15 @@ public class GameController {
 
         if(playerMoveStartTiles.isEmpty() && turn.value%2==0){
             gameOver=true;
+            eventLog.append("\t Player Won in:"+turn.value+" turns");
+            Logger.info("The game has ended.");
 
         }
         else if(opponentMoveStartTiles.isEmpty() && turn.value%2==1)
         {
             gameOver=true;
             eventLog.append("\t Player Won in:"+turn.value+" turns");
+            Logger.info("The game has ended.");
         }
 
         if(gameOver && playerMoveStartTiles.isEmpty() && isTraditional())
@@ -789,61 +807,64 @@ public class GameController {
     * To handle the enemies turns. Artificially triggers the input listener.
     * @param i on which turn should the AI be able to move
     * */
-    private void AI(int i){
+    private void AI(int i) {
+        try {
+            if (againstAI && turn.value % 2 == i) {
+                /**
+                 * It selects a tile that does not contains a disk,at first, so the AIMoves containing the clickable tiles
+                 * can be generated, and saved
+                 */
+                boolean disrupted = false;
+                Tile temp = tiles.stream().filter(o -> o.getDisk() == null).findFirst().get();
+                Event.fireEvent(temp, MouseEvent(temp));
 
-        if(againstAI&& turn.value%2==i){
-            /**
-            * It selects a tile that does not contains a disk,at first, so the AIMoves containing the clickable tiles
-            * can be generated, and saved
-            */
-            boolean disrupted=false;
-            Tile temp=tiles.stream().filter(o -> o.getDisk()==null).findFirst().get();
-            Event.fireEvent(temp, MouseEvent(temp));
+                Random randomGen = new Random();
 
-            Random randomGen=new Random();
-
-            /**
-            * We pick a random tile from AIMoves, and trigger a click on it (the tile gets selected)
-            * we examine if its disk can move. If not, then we keep regeneration it, until it has at least a move.
-            *
-            * Important: It cannot be an infinite cycle, because in nextTurn() method, we already made sure
-            * the game ends if a player cannot make a move
-            */
-            int selectedIndex=randomGen.nextInt(AIMoves.size());
-            while(moveSets.get(AIMoves.get(selectedIndex)).stream().filter( o -> o.getMoveTo()!=null).count()<1)
-                {
-                    selectedIndex=randomGen.nextInt(AIMoves.size());
+                /**
+                 * We pick a random tile from AIMoves, and trigger a click on it (the tile gets selected)
+                 * we examine if its disk can move. If not, then we keep regeneration it, until it has at least a move.
+                 *
+                 * Important: It cannot be an infinite cycle, because in nextTurn() method, we already made sure
+                 * the game ends if a player cannot make a move
+                 */
+                int selectedIndex = randomGen.nextInt(AIMoves.size());
+                while (moveSets.get(AIMoves.get(selectedIndex)).stream().filter(o -> o.getMoveTo() != null).count() < 1) {
+                    selectedIndex = randomGen.nextInt(AIMoves.size());
                 }
 
-            Tile selected= AIMoves.get(selectedIndex);
+                Tile selected = AIMoves.get(selectedIndex);
 
-            Event.fireEvent(selected, MouseEvent(selected));
+                Event.fireEvent(selected, MouseEvent(selected));
 
 
-            /**
-            * We dig through the moveSets to see, we can still move with our selected disk
-            * if not, then the whole process start again...
-            * */
-            selectedIndex=randomGen.nextInt(moveSets.get(selected).size());
-            if(!moveSets.get(selected).stream().filter(o -> o.getMoveTo()!=null).findFirst().isPresent()){
-                disrupted=true;
-                AI(i);
-            }
-
-            /**
-            * We keep picking a random move from the list of moves of the selected disk
-            * until we find one that can be played
-            *
-            * Finally, when we find it we trigger another event in order to execute the move
-            * */
-            if(!disrupted) {
-                while (moveSets.get(selected).get(selectedIndex).getMoveTo() == null) {
-                    selectedIndex = randomGen.nextInt(moveSets.get(selected).size());
+                /**
+                 * We dig through the moveSets to see, we can still move with our selected disk
+                 * if not, then the whole process start again...
+                 * */
+                selectedIndex = randomGen.nextInt(moveSets.get(selected).size());
+                if (!moveSets.get(selected).stream().filter(o -> o.getMoveTo() != null).findFirst().isPresent()) {
+                    disrupted = true;
+                    AI(i);
                 }
-                Event.fireEvent(moveSets.get(selected).get(selectedIndex).getMoveTo(), MouseEvent(moveSets.get(selected).get(selectedIndex).getMoveTo()));
+
+                /**
+                 * We keep picking a random move from the list of moves of the selected disk
+                 * until we find one that can be played
+                 *
+                 * Finally, when we find it we trigger another event in order to execute the move
+                 * */
+                if (!disrupted) {
+                    while (moveSets.get(selected).get(selectedIndex).getMoveTo() == null) {
+                        selectedIndex = randomGen.nextInt(moveSets.get(selected).size());
+                    }
+                    Event.fireEvent(moveSets.get(selected).get(selectedIndex).getMoveTo(), MouseEvent(moveSets.get(selected).get(selectedIndex).getMoveTo()));
+                }
             }
-            }
+        }catch(StackOverflowError overflow){
+            Logger.error("AI error occurred");
+        }
     }
+
 
     /**
     * Completely useless in terms of game mechanics, but helps keeping the code somewhat cleaner.

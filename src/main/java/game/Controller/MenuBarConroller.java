@@ -15,6 +15,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.pmw.tinylog.Logger;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -51,15 +52,15 @@ public class MenuBarConroller {
         menubar.getNewGame().setOnAction(e ->{
             NewGameView a=new NewGameView(this.gamecontroller);
             a.getStage().show();
-
-            {}
+            Logger.info("New Game Window has been created.");
             a.getSizeText().setOnKeyTyped( o ->{
                 OnlyNumericInput(o, a.getSizeText());
             });
 
 
             a.getCreate().setOnAction( p-> {
-                if(a.getSizeText().getText().equals("")) a.getSizeText().setText("8");
+                if(a.getSizeText().getText().equals("")) {a.getSizeText().setText("8"); Logger.info("No input found, default input as used. ");}
+                if(a.getSizeText().getText().chars().allMatch(o -> Character.isDigit(o)))
                     if(Integer.parseInt(a.getSizeText().getText())>=7 && Integer.parseInt(a.getSizeText().getText())<=12){
                             if(a.getAgainstAICheckbox().isSelected() && Integer.parseInt(a.getSizeText().getText()) != 8)
                                 return;
@@ -75,13 +76,21 @@ public class MenuBarConroller {
                                             , a.getForcekillrule().isSelected()
                                             , Integer.parseInt(a.getSizeText().getText()));
                             gamecontroller.getView().getStage().show();
-
+                        Logger.info("New game has been created.");
                     }
+                else{
+                    Logger.info("Wrong numeric input.");
+                    }
+                else{
+                    Logger.info("Wrong character input.");
+                }
+
             });
 
 
             a.getClose().setOnAction( q ->{
                 a.getStage().close();
+                Logger.info("New Game Window has been closed.");
             });
 
 
@@ -92,17 +101,20 @@ public class MenuBarConroller {
                 a.getAIstarts().setSelected(false);
                 a.getAIvsAI().setSelected(false);
                 a.getForcekillrule().setSelected(true);
+                Logger.info("Game Options has been set to traditional.");
             });
         });
 
 
         menubar.getQuit().setOnAction(e ->{
             this.gamecontroller.getView().getStage().close();
+            Logger.info("Quited from the game.");
         });
 
 
         menubar.getEventlog().setOnAction(e ->{
             this.gamecontroller.getEventLog().detailedLogWindow();
+            Logger.info("EventLog Window has been created.");
         });
 
 
@@ -125,6 +137,7 @@ public class MenuBarConroller {
             scoreboard.getSceneParent().autosize();
             scoreboard.getStage().getScene().getWindow().sizeToScene();
             scoreboard.getStage().show();
+            Logger.info("ScoreBoard Window has been created.");
         });
 
 
@@ -148,6 +161,7 @@ public class MenuBarConroller {
             stage.setHeight(170);
             stage.setTitle("Game Setup Information");
             stage.show();
+            Logger.info("Information Window has been created.");
         });
 
     }

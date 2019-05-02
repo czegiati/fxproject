@@ -43,14 +43,14 @@ public class TextAreaController {
     public void append(String string) {
         if (turn.value%2==0)
         {
-            allText=allText+("\n"+"WHITE: "+string);
-        this.textArea.setText("WHITE: "+string);
+            allText=allText+("\n("+turn.value+")WHITE: "+string);
+        this.textArea.setText("("+turn.value+")WHITE: "+string);
         this.textArea.setScrollTop(Double.MAX_VALUE);
         }
         else
             {
-                allText=allText+("\n"+"BLACK: "+string);
-                this.textArea.setText("BLACK: "+string);
+                allText=allText+("\n("+turn.value+")BLACK: "+string);
+                this.textArea.setText("("+turn.value+")BLACK: "+string);
                 this.textArea.setScrollTop(Double.MAX_VALUE);
             }
 }
