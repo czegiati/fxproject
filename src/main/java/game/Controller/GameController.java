@@ -21,37 +21,89 @@ import java.util.stream.Collectors;
 
 
 /**
- * Main controller of the game,containing all of its logic
+ * Main controller of the game,containing all of its logic.
  */
 public class GameController {
+    /**
+     * Size of the game board.
+     */
     private int tablesize=8;
-
+    /**
+     * Main view of the game.
+     */
     private GameView view=new GameView();
-
-
+    /**
+     * List of tiles generated, size of this list is determined by the tablesize.
+     */
     private ArrayList<Tile> tiles=new ArrayList<Tile>();
+    /**
+     * List of pieces controlled by the black player.
+     */
     private ArrayList<Disk> playersDisks=new ArrayList<Disk>();
+    /**
+     * List of pieces controlled by the white player.
+     */
     private ArrayList<Disk> opponentsDisks =new ArrayList<Disk>();
-
+    /**
+     * A map of the possible moves. The key contains the tiles, from where moves starts. The value contains the moves that can be started from the tile stored as key.
+     */
     private Map<Tile,ArrayList<Move>> moveSets= new HashMap<Tile,ArrayList<Move>>();
+    /**
+     * The tile which was selected by the player. If null, then there is no tile selected.
+     */
     private Tile selectedTile=null;
-
+    /**
+     * A referencable integer value. Holds the number of the current turn.
+     */
     private INT turn=new INT(0);
+    /**
+     * Controller of the ingame logger, visually situated at the bottom of the window.
+     */
     private TextAreaController eventLog;
+    /**
+     * Controller of the menubar at the top of the window.
+     */
     private MenuBarConroller menubarController;
+    /**
+     * Whether or not the game has ended.
+     */
     private boolean gameOver=false;
-    private boolean playerWon=false;
+    /**
+     * If killsrike is active in the game, then holds the tile, from which the killstrike can be continued.
+     * If null, then there is no possible killstrike.
+     */
     private Tile killStrikeTile;
-
+    /**
+     *Whether or not the AllDama rule is active.
+     */
     private boolean rule_AllDama=false;
+    /**
+     * Whether or not the ForceKill rule is active.
+     */
     private boolean rule_forceKill=true;
-
+    /**
+     * Whether or not the AI used in the game.
+     */
     private boolean againstAI=true;
+    /**
+     * Whether or not the AI starts the game.
+     */
     private boolean AIstartsthegame=false;
+    /**
+     * Whether or not the AI is playing against itself.
+     */
     private boolean AIagaintAI=false;
+    /**
+     * Contains the possible moves for the AI.
+     */
     private ArrayList<Tile> AIMoves=new ArrayList<Tile>();
-
+    /**
+     * Whether or not the game is paused. Only used, when AIagainstAI is active.
+     */
     private boolean Pause=false;
+    /**
+     * A field used to visualize the AI's movements withe delay, instead of it just happening instantaneously.
+     */
     private int AnimationCounter=0;
 
 
@@ -155,7 +207,7 @@ public class GameController {
     }
 
     /**
-     * Makes the tooltips for the board's tiles
+     * Sets up the tooltips for the board's tiles
      */
     public void setTooltips(){
         tiles.stream().forEach( o->{
@@ -177,7 +229,7 @@ public class GameController {
     }
 
     /**
-     * Sets up the inputs for the game
+     * Sets up the input handling for the game
      * P - pauses the game in an AI against AI game
      * Mouse - sets up the games main controls
      */
@@ -560,8 +612,9 @@ public class GameController {
         }
 
      /**
-      * @param x: tile's X coordinate in table
-      * @param y: tile's Y coordinate in table
+      * For accessing the tile of the board a the given X and Y coordinates.
+      * @param x : tile's X coordinate in table
+      * @param y : tile's Y coordinate in table
       * @returns the tile with the given coordinates
       */
     private Tile get(int x,int y)
@@ -570,8 +623,9 @@ public class GameController {
     }
 
     /**
-    * @param x: tile's X coordinate in table
-    * @param y: tile's Y coordinate in table
+     * Checks if the Tile at row X and column Y coordinates is exists.
+    * @param x : tile's X coordinate in table
+    * @param y : tile's Y coordinate in table
     * @return returns true, if such tile exists
     * */
     private boolean isPresent(int x, int y)
@@ -580,6 +634,7 @@ public class GameController {
     }
 
     /**
+     * Checks whether or not the parameter disks are from the same team.
      * @param one first piece to compare
      * @param two  second piece, which the first should be compared to
      * @return decides whether or not the two pieces are from the same team
@@ -640,12 +695,10 @@ public class GameController {
 
         if(playerMoveStartTiles.isEmpty() && turn.value%2==0){
             gameOver=true;
-            playerWon=false;
 
         }
         else if(opponentMoveStartTiles.isEmpty() && turn.value%2==1)
         {
-            playerWon=true;
             gameOver=true;
             eventLog.append("\t Player Won in:"+turn.value+" turns");
         }
@@ -661,8 +714,8 @@ public class GameController {
                     aliveDisks++;
                 }
             }
-            NewRecordView view=new NewRecordView((int)(100-turn.value/3)+aliveDisks*2);
-            if(manager.isHighEnough(new Record("", (int)(100-turn.value/3)+aliveDisks*2))&& AIstartsthegame)
+            NewRecordView view=new NewRecordView((int)(80-turn.value)+aliveDisks*5);
+            if(manager.isHighEnough(new Record("", (int)(80-turn.value)+aliveDisks*5))&& AIstartsthegame)
             {
                 view.getCreate().setOnAction(e ->{
                     Record a=new Record(view.getSizeText().getText(),view.getScore());
@@ -674,7 +727,7 @@ public class GameController {
             {
                 view.getCreate().setDisable(true);
             }
-
+            view.getClose().setOnAction(e ->{view.getStage().close();});
             view.getStage().show();
         }
         else if(gameOver && opponentMoveStartTiles.isEmpty() && isTraditional())
@@ -688,9 +741,9 @@ public class GameController {
                     aliveDisks++;
                 }
             }
-            NewRecordView view=new NewRecordView((int)(100-turn.value/3)+aliveDisks*2);
+            NewRecordView view=new NewRecordView((int)(80-turn.value)+aliveDisks*5);
 
-            if(manager.isHighEnough(new Record("", (int)(100-turn.value/3)+aliveDisks*2)) && !AIstartsthegame)
+            if(manager.isHighEnough(new Record("", (int)(80-turn.value)+aliveDisks*5)) && !AIstartsthegame)
             {
 
                 view.getCreate().setOnAction(e ->{
@@ -795,7 +848,7 @@ public class GameController {
     /**
     * Completely useless in terms of game mechanics, but helps keeping the code somewhat cleaner.
     * Used to create MouseEvent with a single parameter.
-    * @param tile: uses the tile's coordinates to generate a MouseEvent
+    * @param tile : uses the tile's coordinates to generate a MouseEvent
     * @return returns the generated MouseEvent
     * */
     private MouseEvent MouseEvent(Tile tile){

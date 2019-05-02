@@ -8,12 +8,33 @@ import javafx.scene.shape.Rectangle;
  * Graphical and logical component of the board
  */
 public class Tile extends Rectangle {
+    /**
+     * Size of every tile.
+     */
     private static Integer tilesize;
+    /**
+     * Row of the tile on the board.
+     */
     private Integer TileX;
+    /**
+     * Column of the tile on the board.
+     */
     private Integer TileY;
+    /**
+     * Center X position of Tile (in pixels).
+     */
     private double CenterX;
+    /**
+     * Center Y position of Tile (in pixels).
+     */
     private double CenterY;
+    /**
+     * Contained piece. Null if there is no piece on this tile.
+     */
     private Disk disk=null;
+    /**
+     * Tooltip, that shows up on hovered.
+     */
     private Tooltip tooltip;
 
     /**
@@ -61,7 +82,7 @@ public class Tile extends Rectangle {
 
     /**
      * Center position of the tile, getter
-     * @returnCenter position of the tile,X coordinate
+     * @return Center position of the tile,X coordinate
      */
     public double getCenterX() {
         return CenterX;
@@ -69,7 +90,7 @@ public class Tile extends Rectangle {
 
     /**
      * Center position of the tile,getter
-     * @returnCenter position of the tile,Y coordinate
+     * @return Center position of the tile,Y coordinate
      */
     public double getCenterY() {
         return CenterY;

@@ -4,6 +4,9 @@ package game.Model;
  * Stores an integer value, and can be referenced
  */
 public class INT {
+    /**
+     * Stored value
+     */
     public int value;
 
     /**

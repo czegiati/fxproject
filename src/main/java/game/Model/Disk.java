@@ -8,7 +8,13 @@ import javafx.scene.shape.StrokeType;
  * The graphical Checker pieces
  */
 public class Disk extends Circle {
+    /**
+     * Size of every piece.
+     */
     private static int diskRange=30;
+    /**
+     * Whether or not this piece is a king.
+     */
     private boolean isDama=false;
 
     /**

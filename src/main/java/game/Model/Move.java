@@ -4,7 +4,13 @@ package game.Model;
  * Information about a possible move, that can be executed
  */
 public class Move {
+    /**
+     * Where the piece will move.
+     */
     Tile moveTo=null;
+    /**
+     * Which tile's piece wil be killed if the move gets executed.
+     */
     Tile killedIfMoved=null;
 
     /**

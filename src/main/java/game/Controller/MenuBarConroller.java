@@ -23,8 +23,13 @@ import java.util.stream.Collectors;
  * Controls the game's menubar
  */
 public class MenuBarConroller {
-
+    /**
+     * The game's menubar view.
+     */
     private GameMenuBar menubar;
+    /**
+     * The main game controller.
+     */
     private GameController gamecontroller;
 
     /**

@@ -10,9 +10,18 @@ import javafx.stage.Stage;
  * Used to store and read previous actions in the game
  */
 public class TextAreaController {
+    /**
+     * The graphical TextArea on the bottom of the game's window.
+     */
     TextArea textArea;
-    boolean whiteplayer = true;
+    /**
+     * String containing every game event.
+     */
     String allText= new String("");
+
+    /**
+     * Reference to the current turn integer.
+     */
     INT turn;
 
     /**

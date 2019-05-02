@@ -4,7 +4,13 @@ package game.Model;
  * Record for scoreboard
  */
 public class Record {
+    /**
+     * Name of the record.
+     */
     String name;
+    /**
+     * Achieved score.
+     */
     Integer score;
 
     /**
