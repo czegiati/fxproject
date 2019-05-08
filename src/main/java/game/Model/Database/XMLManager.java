@@ -8,12 +8,17 @@ import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.pmw.tinylog.Logger;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
+import java.net.JarURLConnection;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Comparator;
 
@@ -25,13 +30,53 @@ public class XMLManager {
      * List of records.
      */
     ArrayList<Record> recordList=new ArrayList<>();
-     private static String input= "records.xml";
+    /**
+     * Input stream from the original records' xml file.
+     */
+    InputStream input = getClass().getResourceAsStream("/records.xml");
+    /**
+     * If is run though a JAR, then it is the file which is being loaded and overwritten, instead of the original records file.
+     */
+     private File inputJar=null;
+    /**
+     * It is what gets loaded and overwritten, when the game is not in a JAR file.
+     */
+    private File JARlessInput;
+
     /**
      * Constructor without parameters
      */
-    public XMLManager(){
-        loadRecords(recordList);
+    public XMLManager()  {
+        try {
+            if(!this.isInJAR())
+            {
+                JARlessInput=new File(getClass().getClassLoader().getResource("records.xml").getFile());
+            }
+            File outerJarFile=new File((XMLManager.class.getProtectionDomain().getCodeSource().getLocation().toURI())).getParentFile();
+            outerJarFile = new File(outerJarFile.getPath()+"/records.xml");
+            if(isInJAR() && !outerJarFile.exists())
+            {
+                outerJarFile.createNewFile();
+                Logger.info("Creating new records file in the JAR's directory.");
+                //Files.copy(input,outerJarFile.toPath()
+                byte[] buffer = new byte[input.available()];
+                input.read(buffer);
+                Files.write(outerJarFile.toPath(),buffer);
 
+                Logger.info("Successfully created new records file.");
+            }
+
+            if(isInJAR()){
+                this.inputJar=outerJarFile;
+                Logger.info("Records file already exists. Loading file from JAR's directory.");
+            }
+        } catch (URISyntaxException e) {
+           Logger.error("URI Syntax error while constructing XMLManager.");
+        } catch (IOException e) {
+            Logger.error("IO error while constructing outer XML to store records.");
+        }
+
+        loadRecords(recordList);
     }
 
     /**
@@ -41,9 +86,22 @@ public class XMLManager {
     private void loadRecords(ArrayList<Record> list){
 
         try {
-            File inputFile = new File(input);
+
+            InputStream inputFile;
+            File file;
+               inputFile= input;
+                file =inputJar;
+
+
             SAXBuilder saxBuilder = new SAXBuilder();
-            Document document = saxBuilder.build(inputFile);
+            Document document;
+            if(!this.isInJAR())
+                document= saxBuilder.build(inputFile);
+            else
+            {
+                Logger.info("Loading records, while is a JAR file.");
+                document = saxBuilder.build(inputJar);
+            }
             Element classElement = document.getRootElement();
 
             for(Element element:classElement.getChildren())
@@ -55,9 +113,9 @@ public class XMLManager {
             }
 
         } catch(JDOMException e) {
-            e.printStackTrace();
+            Logger.error("JDOM error while loading records.");
         } catch(IOException ioe) {
-            ioe.printStackTrace();
+            Logger.error("IO error while loading records.");
         }
     }
 
@@ -89,11 +147,16 @@ public class XMLManager {
             XMLOutputter xmlOutput = new XMLOutputter();
 
             xmlOutput.setFormat(Format.getPrettyFormat());
-            xmlOutput.output(doc, new FileWriter(input));
+            if(this.isInJAR())
+            {
+                xmlOutput.output(doc, new FileWriter(inputJar));
+                Logger.info("Saving records, while is a JAR file.");
+            }
+            else
+            xmlOutput.output(doc, new FileWriter(JARlessInput));
 
         } catch(IOException e) {
-
-            e.printStackTrace();
+            Logger.error("IO exception while saving records.");
         }
     }
 
@@ -102,9 +165,11 @@ public class XMLManager {
      * @param record record to be added if high enough
      */
     public void addRecord(Record record){
+        Logger.info("Adding new record to records file.");
         this.recordList.sort(Comparator.comparing(Record::getScore,Comparator.reverseOrder()));
         if(this.isHighEnough(record))
         refreshHighScoreFile(record);
+        Logger.info("Record has been added.");
     }
 
     /**
@@ -133,6 +198,24 @@ public class XMLManager {
             else return false;
     }
 
+    /**
+     * Useful if is run in a JAR file.
+     * @return Whether or not is in a JAR file.
+     */
+    public boolean isInJAR(){
+        URL url = this.getClass().getClassLoader().getResource("records.xml");
+        URLConnection urlConnection = null;
+        try {
+            urlConnection = url.openConnection();
+        } catch (IOException e) {
+            Logger.error("IO exception while trying to check if it is in a jar.");
+        }
+        if (urlConnection instanceof JarURLConnection) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     /**
      * Getter of the RecordList field.
      * @return Returns the list containing the highScore.
