@@ -5,7 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Graphical and logical component of the board
+ * Graphical and logical component of the board.
  */
 public class Tile extends Rectangle {
     /**
@@ -65,7 +65,7 @@ public class Tile extends Rectangle {
     }
 
     /**
-     * Changes the size of every tile
+     * Changes the size of every tile.
      * @param size new size of every tile
      */
     public static void setTileSize(int size){
@@ -73,7 +73,7 @@ public class Tile extends Rectangle {
     }
 
     /**
-     * tilesize' getter
+     * tilesize' getter.
      * @return size of every tile
      */
     public static Integer getTilesize() {
@@ -81,7 +81,7 @@ public class Tile extends Rectangle {
     }
 
     /**
-     * Center position of the tile, getter
+     * Center position of the tile, getter.
      * @return Center position of the tile,X coordinate
      */
     public double getCenterX() {
@@ -89,7 +89,7 @@ public class Tile extends Rectangle {
     }
 
     /**
-     * Center position of the tile,getter
+     * Center position of the tile,getter.
      * @return Center position of the tile,Y coordinate
      */
     public double getCenterY() {
@@ -97,7 +97,7 @@ public class Tile extends Rectangle {
     }
 
     /**
-     * Position on board
+     * Position on board.
      * @return column of tile on board
      */
     public Integer getTileX() {
@@ -105,7 +105,7 @@ public class Tile extends Rectangle {
     }
 
     /**
-     * Position on board
+     * Position on board.
      * @return row of tile on board
      */
     public Integer getTileY() {
@@ -113,7 +113,7 @@ public class Tile extends Rectangle {
     }
 
     /**
-     * getter of contained disk
+     * getter of contained disk.
      * @return contained disk
      */
     public Disk getDisk() {
@@ -121,7 +121,7 @@ public class Tile extends Rectangle {
     }
 
     /**
-     * Sets a disk on this tile
+     * Sets a disk on this tile.
      * @param disk new contained disk
      */
     public void setDisk(Disk disk) {
@@ -130,7 +130,7 @@ public class Tile extends Rectangle {
     }
 
     /**
-     * Getter of tooltip
+     * Getter of tooltip.
      * @return returns the tiles tooltip
      */
     public Tooltip getTooltip() {

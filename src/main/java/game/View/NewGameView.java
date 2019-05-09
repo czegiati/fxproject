@@ -14,24 +14,59 @@ import javafx.util.Duration;
 
 import static javafx.geometry.Pos.CENTER;
 
+/**
+ * View for the new game window.
+ */
 public class NewGameView {
+    /**
+     * Stage of the new game window.
+     */
     Stage stage=new Stage();
+    /**
+     * Grid, the UI elements are placed on it.
+     */
     GridPane grid=new GridPane();
-    GameController controller;
-
+    /**
+     * Input text, determining the size of the gameboard.
+     */
     TextField sizeText=new TextField();
+    /**
+     * Checkbox for the against AI game rule.
+     */
     CheckBox againstAICheckbox=new CheckBox();
+    /**
+     * Checkbox for the AI starts game rule.
+     */
     CheckBox AIstarts=new CheckBox();
+    /**
+     * Checkbox for the AI vs Ai game rule.
+     */
     CheckBox AIvsAI=new CheckBox();
+    /**
+     * Checkbox  for the all Dama rule.
+     */
     CheckBox allDamaRure=new CheckBox();
+    /**
+     * Checkbox for the force kill rule.
+     */
     CheckBox forcekillrule=new CheckBox();
-
+    /**
+     * Create button.
+     */
     Button create=new Button("Create");
+    /**
+     * Close button.
+     */
     Button close = new Button("Close");
+    /**
+     * "Traditional" button.
+     */
     Button setScored=new Button ("Traditional");
 
-    public NewGameView(GameController controller){
-        this.controller=controller;
+    /**
+     * Constructor without parameters.
+     */
+    public NewGameView(){
         stage.setScene(new Scene(grid));
         stage.setTitle("Creating new game...");
 
@@ -110,51 +145,75 @@ public class NewGameView {
         this.stage.setAlwaysOnTop(true);
     }
 
+    /**
+     * Getter of the new Game's stage.
+     * @return Returns the new game's stage.
+     */
     public Stage getStage() {
         return stage;
     }
 
-
-    public GridPane getGrid() {
-        return grid;
-    }
-
-    public GameController getController() {
-        return controller;
-    }
-
+    /**
+     * Getter of the textfield.
+     * @return Returns the textfield.
+     */
     public TextField getSizeText() {
         return sizeText;
     }
 
+    /**
+     * Getter of the againstAI checkbox.
+     * @return Return the Checkbox.
+     */
     public CheckBox getAgainstAICheckbox() {
         return againstAICheckbox;
     }
-
+    /**
+     * Getter of the AIstarts checkbox.
+     * @return Return the Checkbox.
+     */
     public CheckBox getAIstarts() {
         return AIstarts;
     }
-
+    /**
+     * Getter of the AIvsAI checkbox.
+     * @return Return the Checkbox.
+     */
     public CheckBox getAIvsAI() {
         return AIvsAI;
     }
-
+    /**
+     * Getter of the AllDamaRule checkbox.
+     * @return Return the Checkbox.
+     */
     public CheckBox getAllDamaRure() {
         return allDamaRure;
     }
-
+    /**
+     * Getter of the ForceKill checkbox.
+     * @return Return the Checkbox.
+     */
     public CheckBox getForcekillrule() {
         return forcekillrule;
     }
-
+    /**
+     * Getter of the create button.
+     * @return Return the Button.
+     */
     public Button getCreate() {
         return create;
     }
-
+    /**
+     * Getter of the close button.
+     * @return Return the Button.
+     */
     public Button getClose() {
         return close;
     }
-
+    /**
+     * Getter of the Traditional button.
+     * @return Return the Button.
+     */
     public Button getSetScored() {
         return setScored;
     }

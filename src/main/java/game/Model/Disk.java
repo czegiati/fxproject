@@ -5,7 +5,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.StrokeType;
 
 /**
- * The graphical Checker pieces
+ * The graphical Checker pieces.
  */
 public class Disk extends Circle {
     /**
@@ -18,7 +18,7 @@ public class Disk extends Circle {
     private boolean isDama=false;
 
     /**
-     * Constructor with parameters
+     * Constructor with parameters.
      * @param x the circle's center's X coordinate
      * @param y the circle's center's Y coordinate
      * @param pos the tile, where the checker piece is situated in
@@ -31,7 +31,7 @@ public class Disk extends Circle {
     }
 
     /**
-     * Sets the range of all the circles
+     * Sets the range of all the circles.
      * @param diskRange range of circle
      */
     public static void setDiskRange(int diskRange) {
@@ -39,7 +39,7 @@ public class Disk extends Circle {
     }
 
     /**
-     * isDama's getter
+     * isDama's getter.
      * @return true if piece is a king
      */
     public boolean isDama() {
@@ -47,7 +47,7 @@ public class Disk extends Circle {
     }
 
     /**
-     * Makes piece into a king, als updates its graphical representation
+     * Makes piece into a king, als updates its graphical representation.
      */
     public void makeIntoDama() {
         isDama=true;

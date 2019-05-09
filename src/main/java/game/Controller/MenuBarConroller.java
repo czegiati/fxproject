@@ -3,6 +3,7 @@ package game.Controller;
 import game.Model.Database.XMLManager;
 import game.Model.Record;
 import game.View.GameMenuBar;
+import game.View.GameView;
 import game.View.NewGameView;
 import game.View.ScoreBoard;
 
@@ -25,24 +26,26 @@ import java.util.stream.Collectors;
  */
 public class MenuBarConroller {
     /**
+     * Games main logic.
+     */
+    GameController gamecontroller;
+    /**
      * The game's menubar view.
      */
     private GameMenuBar menubar;
     /**
      * The main game controller.
      */
-    private GameController gamecontroller;
-
+    MainController MainController;
     /**
-     * Constructor with parameters
-     * @param menubar The class containing the menubar and its elements in the view
-     * @param gc   The game's main Controller
+     * Constructor without parameters parameters
      */
-    MenuBarConroller(GameMenuBar menubar,GameController gc){
-        this.menubar=menubar;
-        this.gamecontroller=gc;
-        XMLManager a=new XMLManager();
+    public MenuBarConroller(){
+        MainController =new MainController();
+        this.menubar=MainController.getView().getMenubar();
+        this.gamecontroller=MainController.getGamecontroller();
         setUp();
+        this.MainController.getView().getStage().show();
     }
 
     /**
@@ -50,7 +53,7 @@ public class MenuBarConroller {
      */
     public void setUp(){
         menubar.getNewGame().setOnAction(e ->{
-            NewGameView a=new NewGameView(this.gamecontroller);
+            NewGameView a=new NewGameView();
             a.getStage().show();
             Logger.info("New Game Window has been created.");
             a.getSizeText().setOnKeyTyped( o ->{
@@ -62,24 +65,28 @@ public class MenuBarConroller {
                 if(a.getSizeText().getText().equals("")) {a.getSizeText().setText("8"); Logger.info("No input found, default input as used. ");}
                 if(a.getSizeText().getText().chars().allMatch(o -> Character.isDigit(o)))
                     if(Integer.parseInt(a.getSizeText().getText())>=7 && Integer.parseInt(a.getSizeText().getText())<=12){
-                            if(a.getAgainstAICheckbox().isSelected() && Integer.parseInt(a.getSizeText().getText()) != 8)
-                                return;
+                        if(a.getAgainstAICheckbox().isSelected() && Integer.parseInt(a.getSizeText().getText()) != 8)
+                            return;
 
-                            a.getStage().close();
-                            gamecontroller.getView().getStage().close();
-                            this.gamecontroller =
-                                    new GameController(
-                                             a.getAgainstAICheckbox().isSelected()
-                                            , a.getAIvsAI().isSelected()
-                                            , a.getAIstarts().isSelected()
-                                            , a.getAllDamaRure().isSelected()
-                                            , a.getForcekillrule().isSelected()
-                                            , Integer.parseInt(a.getSizeText().getText()));
-                            gamecontroller.getView().getStage().show();
+                        a.getStage().close();
+                        if(MainController.getTimeline()!=null)
+                        MainController.getTimeline().stop();
+                        MainController.getView().getStage().close();
+                        this.MainController =
+                                new MainController(
+                                        a.getAgainstAICheckbox().isSelected()
+                                        , a.getAIvsAI().isSelected()
+                                        , a.getAIstarts().isSelected()
+                                        , a.getAllDamaRure().isSelected()
+                                        , a.getForcekillrule().isSelected()
+                                        , Integer.parseInt(a.getSizeText().getText()));
+                        this.menubar=MainController.getView().getMenubar();
+                        setUp();
+                        MainController.getView().getStage().show();
                         Logger.info("New game has been created.");
                     }
-                else{
-                    Logger.info("Wrong numeric input.");
+                    else{
+                        Logger.info("Wrong numeric input.");
                     }
                 else{
                     Logger.info("Wrong character input.");
@@ -107,15 +114,13 @@ public class MenuBarConroller {
 
 
         menubar.getQuit().setOnAction(e ->{
-            this.gamecontroller.getView().getStage().close();
+            this.MainController.getView().getStage().close();
             Logger.info("Quited from the game.");
         });
 
 
-        menubar.getEventlog().setOnAction(e ->{
-            this.gamecontroller.getEventLog().detailedLogWindow();
-            Logger.info("EventLog Window has been created.");
-        });
+        menubar.getEventlog().setDisable(true);
+
 
 
         menubar.getScoreBoard().setOnAction(e ->{
@@ -127,7 +132,7 @@ public class MenuBarConroller {
             int index=0;
             for(Record record:records)
             {
-               index++;
+                index++;
                 recordStringList.add(index+".\t"+record.getName()+" :\t\t "+record.getScore()+" points");
             }
             ObservableList<String> items= FXCollections.observableArrayList(recordStringList);
@@ -178,6 +183,10 @@ public class MenuBarConroller {
                 && !Character.isDigit(event.getCharacter().charAt(0) )){
             textfield.deleteText(textfield.getText().length()-1,textfield.getText().length());
         }
+    }
+
+    public GameView getView(){
+        return MainController.getView();
     }
 
 

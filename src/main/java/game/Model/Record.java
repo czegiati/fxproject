@@ -1,7 +1,7 @@
 package game.Model;
 
 /**
- * Record for scoreboard
+ * Record for scoreboard.
  */
 public class Record {
     /**
@@ -14,7 +14,7 @@ public class Record {
     Integer score;
 
     /**
-     * Records constructor with parameters
+     * Records constructor with parameters.
      * @param name name of the record
      * @param score achieved score
      */
@@ -24,7 +24,7 @@ public class Record {
     }
 
     /**
-     * name's getter
+     * name's getter.
      * @return name of the record
      */
     public String getName() {
@@ -32,7 +32,7 @@ public class Record {
     }
 
     /**
-     * score's getter
+     * score's getter.
      * @return value of score
      */
     public Integer getScore() {
@@ -40,7 +40,7 @@ public class Record {
     }
 
     /**
-     * Record in String form
+     * Record in String form.
      * @return readable String form of record
      */
     @Override

@@ -44,7 +44,7 @@ public class XMLManager {
     private File JARlessInput;
 
     /**
-     * Constructor without parameters
+     * Constructor without parameters.
      */
     public XMLManager()  {
         try {

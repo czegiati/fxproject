@@ -13,15 +13,39 @@ import javafx.stage.Stage;
 
 import static javafx.geometry.Pos.CENTER;
 
+/**
+ * New Record window, opened when won a game and the game was played with traditional rules.
+ */
 public class NewRecordView {
+    /**
+     * Stage og the window.
+     */
     Stage stage=new Stage();
+    /**
+     * Grid, where the UI elements are placed on.
+     */
     GridPane grid=new GridPane();
+    /**
+     * A number, written in a Text object when opened.
+     */
     Integer score;
+    /**
+     * Where the record's name should be written.
+     */
     TextField nameText=new TextField();
-
+    /**
+     * Add button on the bottom of the window.
+     */
     Button create=new Button("Add");
+    /**
+     * Close Button on the bottom of the window.
+     */
     Button close = new Button("Cancel");
 
+    /**
+     * Constructor with parameters.
+     * @param score Achieved score in the game.
+     */
     public NewRecordView(Integer score){
         this.score=score;
         stage.setScene(new Scene(grid));
@@ -60,22 +84,42 @@ public class NewRecordView {
         this.stage.setAlwaysOnTop(true);
     }
 
+    /**
+     * Getter of the stage.
+     * @return Returns the stage.
+     */
     public Stage getStage() {
         return stage;
     }
 
+    /**
+     * Getter of the textfield of the record's name.
+     * @return Return the textfield.
+     */
     public TextField getSizeText() {
         return nameText;
     }
 
+    /**
+     * Getter of the Create button.
+     * @return Returns the create button.
+     */
     public Button getCreate() {
         return create;
     }
 
+    /**
+     * Getter of the close button.
+     * @return Returns the close button.
+     */
     public Button getClose() {
         return close;
     }
 
+    /**
+     * Getter of the score integer.
+     * @return Returns the score integer.
+     */
     public Integer getScore() {
         return score;
     }

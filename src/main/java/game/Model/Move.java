@@ -1,7 +1,7 @@
 package game.Model;
 
 /**
- * Information about a possible move, that can be executed
+ * Information about a possible move, that can be executed.
  */
 public class Move {
     /**
@@ -14,7 +14,7 @@ public class Move {
     Tile killedIfMoved=null;
 
     /**
-     * Contructor with parameters
+     * Contructor with parameters.
      * @param moveTo where the piece should be moved
      * @param killedIfMoved what tile's piece will be captured upon execution
      */
@@ -25,7 +25,7 @@ public class Move {
     }
 
     /**
-     * Executes move
+     * Executes move.
      * @param movedTile the starter position of the move
      */
     public void execute(Tile movedTile){
@@ -42,7 +42,7 @@ public class Move {
     }
 
     /**
-     * MOveTo's getter
+     * MOveTo's getter.
      * @return returns the tile, where the controlled piece will end up after execution
      */
     public Tile getMoveTo() {
@@ -50,7 +50,7 @@ public class Move {
     }
 
     /**
-     * Sets a new position,where the selected tile will move
+     * Sets a new position,where the selected tile will move.
      * @param moveTo new position after execution
      */
     public void setMoveTo(Tile moveTo) {
@@ -58,7 +58,7 @@ public class Move {
     }
 
     /**
-     * killedIfMoved's getter
+     * killedIfMoved's getter.
      * @return which tile's piece will be captured
      */
     public Tile getKilledIfMoved() {

@@ -5,11 +5,26 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * View of the ScoreBoard window.
+ */
 public class ScoreBoard {
+    /**
+     * List containing the top records.
+     */
     ListView<String> ListView=new ListView<>();
+    /**
+     * Stage of the ScoreBoard.
+     */
     Stage stage =new Stage();
+    /**
+     * Main screen of the scoreboard.
+     */
     VBox SceneParent=new VBox(10);
 
+    /**
+     * Constructor without parameters.
+     */
     public ScoreBoard(){
         stage.setTitle("High Scores");
         stage.setAlwaysOnTop(true);
@@ -19,27 +34,28 @@ public class ScoreBoard {
         ListView.setPrefWidth(400);
     }
 
-    public javafx.scene.control.ListView<String> getListView() {
+    /**
+     * Getter of the ListView.
+     * @return Returns the ListView.
+     */
+    public ListView<String> getListView() {
         return ListView;
     }
 
-    public void setListView(javafx.scene.control.ListView<String> listView) {
-        ListView = listView;
-    }
-
+    /**
+     * Getter of the stage.
+     * @return Return the stage.
+     */
     public Stage getStage() {
         return stage;
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
+    /**
+     * Getter of the screen.
+     * @return Returns the screen.
+     */
     public VBox getSceneParent() {
         return SceneParent;
     }
 
-    public void setSceneParent(VBox sceneParent) {
-        SceneParent = sceneParent;
-    }
 }

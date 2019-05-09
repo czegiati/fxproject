@@ -1,6 +1,8 @@
 package game;
 
 import game.Controller.GameController;
+import game.Controller.MainController;
+import game.Controller.MenuBarConroller;
 import game.Model.Database.XMLManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -14,13 +16,13 @@ import java.net.URISyntaxException;
 public class Main extends Application {
 
     /**
-     * In a JavaFX Application the start method is used as the main method
+     * In a JavaFX Application the start method is used as the main method.
      * @param primaryStage Main stage/window of the application.
      */
     @Override
     public void start(Stage primaryStage) throws IOException, URISyntaxException {
-        GameController controller=new GameController();
-        controller.getView().getStage().show();
+        MenuBarConroller controller=new MenuBarConroller();
+
     }
 
     /**
