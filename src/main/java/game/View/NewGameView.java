@@ -1,6 +1,5 @@
 package game.View;
 
-import game.Controller.GameController;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;

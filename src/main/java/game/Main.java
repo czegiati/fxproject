@@ -1,14 +1,10 @@
 package game;
 
-import game.Controller.GameController;
-import game.Controller.MainController;
 import game.Controller.MenuBarConroller;
-import game.Model.Database.XMLManager;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 
 /**
  * Main class of the Application. Does not contain any fields or methods expect the main and the start methods.
@@ -20,7 +16,7 @@ public class Main extends Application {
      * @param primaryStage Main stage/window of the application.
      */
     @Override
-    public void start(Stage primaryStage) throws IOException, URISyntaxException {
+    public void start(Stage primaryStage)  {
         MenuBarConroller controller=new MenuBarConroller();
 
     }

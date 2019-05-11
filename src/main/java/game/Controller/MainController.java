@@ -1,6 +1,7 @@
 package game.Controller;
 
 import game.Model.Database.XMLManager;
+import game.Model.GameService;
 import game.Model.Record;
 import game.Model.Tile;
 import game.View.GameView;
@@ -11,6 +12,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeType;
@@ -18,8 +20,6 @@ import javafx.util.Duration;
 import org.pmw.tinylog.Logger;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class MainController {
     /**
@@ -29,32 +29,41 @@ public class MainController {
     /**
      * Interactive services for the game.
      */
-    private GameController gamecontroller;
+    private GameService gameService;
     /**
-     * A field used to visualize the AI's movements withe delay, instead of it just happening instantaneously.
+     * Timeline, which is being used, to update the screen.
      */
-    private int AnimationCounter=0;
-
     private Timeline timeline;
 
 
-
+    /**
+     * Constructor without parameters
+     */
     public MainController(){
         Tile.setTileSize(70);
-    this.gamecontroller=new GameController();
+    this.gameService =new GameService();
     generateGraphicalContent();
     setTooltips();
     setEventHandlers();
-    nextTurn();
+    ScreenAutoRefresh();
 
     }
+    /**
+     * Constructor with parameters.
+     * @param vsai              configuration determining if artificial intelligence should be used
+     * @param aivsai            configuration determining if both players should be artificial
+     * @param aistarts          configuration determining which player is artificial
+     * @param rule_AllDama      configuration determining if all pieces should be kings
+     * @param rule_forceKill    configuration determining if players should be forced to capture the opponent's pieces if it is passible in that turn
+     * @param tablesize         the size of the board
+     */
 public MainController(boolean vsai,boolean aivsai, boolean aistarts,boolean rule_AllDama,boolean rule_forceKill, int tablesize) {
     Tile.setTileSize(70);
-    this.gamecontroller=new GameController(vsai,aivsai,aistarts,rule_AllDama,rule_forceKill,tablesize);
+    this.gameService =new GameService(vsai,aivsai,aistarts,rule_AllDama,rule_forceKill,tablesize);
     generateGraphicalContent();
     setTooltips();
     setEventHandlers();
-    nextTurn();
+    ScreenAutoRefresh();
 }
     /**
      * Takes inputs, and decides and calls the model's functions to handle them.
@@ -63,7 +72,7 @@ public MainController(boolean vsai,boolean aivsai, boolean aistarts,boolean rule
 
         this.view.getScreen().getScene().setOnKeyPressed(q -> {
             if (q.getCode() == KeyCode.P) {
-                gamecontroller.Pause();
+                gameService.Pause();
             }
         });
 
@@ -72,21 +81,15 @@ public MainController(boolean vsai,boolean aivsai, boolean aistarts,boolean rule
 
 
                 Tile target = (Tile) e.getTarget();
-                if(gamecontroller.mousePress(target)){
-                    nextTurn();
-                    refresh();
-                }
-
+               gameService.mousePress(target);
                 Logger.info("Pressed on ("+target.getTileX()+","+target.getTileY()+") tile.");
 
-
-            refresh();
             });
 
 
 
             this.getView().getStage().setOnHidden(e ->{
-                if(this.gamecontroller.isGameOver())
+                if(this.gameService.isGameOver())
                     Logger.info("Stage Closed");
                 else
                     Logger.info("Stage closed before the game ended");
@@ -94,12 +97,30 @@ public MainController(boolean vsai,boolean aivsai, boolean aistarts,boolean rule
 
     }
 
+    /**
+     * Graphically refreshes the screen .
+     */
     private void refresh(){
         {
-            gamecontroller.getTiles().forEach(o -> o.setStroke(null));
+            gameService.getTiles().forEach(o ->
+            {o.setStroke(null);
+            if(o.getDisk()!=null && o.getDisk().isDama())
+            {
+                o.getDisk().setStrokeWidth(8);
+                o.getDisk().setStrokeType(StrokeType.INSIDE);
+                if(o.getDisk().getFill()== Color.BLACK)
+                {
+                    o.getDisk().setStroke(Color.rgb(40,40,40));
+                }
+                else
+                {
+                    o.getDisk().setStroke(Color.rgb(230,230,230));
+                }
+            }
+            });
 
 
-            ArrayList<Tile> tiles=gamecontroller.getMoveSetTilesOfSelectedTile(gamecontroller.getTargetTiles());
+            ArrayList<Tile> tiles= gameService.getMoveSetTilesOfSelectedTile(gameService.getTargetTiles());
             if(tiles!=null)
             {
                 tiles.stream()
@@ -112,21 +133,108 @@ public MainController(boolean vsai,boolean aivsai, boolean aistarts,boolean rule
         }
 
         {
-            ArrayList<Tile> tiles =gamecontroller.getTiles();
+            ArrayList<Tile> tiles = gameService.getTiles();
 
-            gamecontroller.getOpponentsDisks().stream().forEach(o -> {
+            tiles.forEach(e ->{
+                if(e.getDisk()!=null) {
+                    e.getDisk().setCenterY(e.getCenterY());
+                    e.getDisk().setCenterX(e.getCenterX());
+                }
+            });
+
+            gameService.getOpponentsDisks().stream().forEach(o -> {
                 if (!tiles.stream().filter(o2 -> o2.getDisk() == o).findFirst().isPresent()) {
                     view.getTable().getChildren().remove(o);
                 }
             });
 
-            gamecontroller.getPlayersDisks().stream().forEach(o -> {
+            gameService.getPlayersDisks().stream().forEach(o -> {
                 if (!tiles.stream().filter(o2 -> o2.getDisk() == o).findFirst().isPresent()) {
                     view.getTable().getChildren().remove(o);
                 }
             });
         }
+        if(gameService.isGameOver()) {
+            Logger.info("Game has ended.");
+            timeline.stop();
+            if (gameService.isBlackPlayerLost() && gameService.isTraditional()) {
+                XMLManager manager = new XMLManager();
+                int aliveDisks = 0;
+                for (Tile tile : gameService.getTiles()) {
+                    if (gameService.getOpponentsDisks().contains(tile.getDisk())) {
+                        aliveDisks++;
+                    }
+                }
+                NewRecordView view = new NewRecordView((int) (80 - gameService.getTurn().value) + aliveDisks * 5);
+                if (manager.isHighEnough(new Record("", (int) (80 - gameService.getTurn().value) + aliveDisks * 5)) && gameService.isAIstartsthegame()) {
+                    view.getCreate().setOnAction(e -> {
+                        Record a = new Record(view.getSizeText().getText(), view.getScore());
+                        manager.addRecord(a);
+                        view.getStage().close();
+                    });
+                } else {
+                    view.getCreate().setDisable(true);
+                    view.getSizeText().setDisable(true);
+                }
+                view.getClose().setOnAction(e -> {
+                    view.getStage().close();
+                });
+                view.getStage().show();
 
+
+            } else if (gameService.isWhitePlayerLost()&& gameService.isTraditional()) {
+                XMLManager manager = new XMLManager();
+                int aliveDisks = 0;
+                for (Tile tile : gameService.getTiles()) {
+                    if (gameService.getPlayersDisks().contains(tile.getDisk())) {
+                        aliveDisks++;
+                    }
+                }
+                NewRecordView view = new NewRecordView((int) (80 - gameService.getTurn().value) + aliveDisks * 5);
+
+                if (manager.isHighEnough(new Record("", (int) (80 - gameService.getTurn().value) + aliveDisks * 5)) && !gameService.isAIstartsthegame()) {
+
+                    view.getCreate().setOnAction(e -> {
+                        Record a = new Record(view.getSizeText().getText(), view.getScore());
+                        manager.addRecord(a);
+                        view.getStage().close();
+                    });
+                } else {
+                    view.getCreate().setDisable(true);
+                    view.getSizeText().setDisable(true);
+                }
+                view.getClose().setOnAction(e -> {
+                    view.getStage().close();
+                });
+
+
+                view.getStage().show();
+            }
+        }
+
+
+    }
+
+
+    /**
+     * Automatically refreshes the screen, 10 times a second.
+     */
+    private void ScreenAutoRefresh(){
+        timeline=new Timeline();
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.getKeyFrames().add(
+                new KeyFrame(Duration.millis(1000/10),
+                        new EventHandler<ActionEvent>() {
+
+                            @Override
+                            public void handle(ActionEvent t) {
+                                refresh();
+                            }
+                        },
+                        new KeyValue[0])
+        );
+
+        timeline.playFromStart();
     }
 
 
@@ -134,7 +242,10 @@ public MainController(boolean vsai,boolean aivsai, boolean aistarts,boolean rule
      * Sets up the tooltips for the board's tiles.
      */
     public void setTooltips(){
-        gamecontroller.getTiles().stream().forEach( o->{
+        gameService.getTiles().forEach(o ->{
+            o.setTooltip(new Tooltip("Tile:("+o.getTileX()+","+o.getTileY()+")"));
+        });
+        gameService.getTiles().stream().forEach(o->{
             o.getTooltip().setStyle(
                     "     -fx-background-radius: 0 0 0 0;\n" +
                             "     -fx-background-color: rgba(100,100,100,0.5)");
@@ -156,171 +267,47 @@ public MainController(boolean vsai,boolean aivsai, boolean aistarts,boolean rule
      * Generates the tiles and the pieces into the screen.
      */
     public void generateGraphicalContent(){
-        this.gamecontroller.getTiles().forEach( o->{
-            this.view.getTable().getChildren().add(o);
-        });
-        this.gamecontroller.getOpponentsDisks().forEach(o ->{
-            this.view.getTable().getChildren().add(o);
-        });
-        this.gamecontroller.getPlayersDisks().forEach(o ->{
-            this.view.getTable().getChildren().add(o);
-        });
-    }
-
-    /**
-     * Visually remove/modify elements from/on the screen, check if game-ending conditions are met, generate movements for the new turn, and of course end the turn/give the turn to the other player (which is being examined via checking the turn variable).
-     */
-    public void nextTurn(){
-        gamecontroller.refreshDamas();
-        gamecontroller.refreshMoveSets();
-
-        List<Tile> playerMoveStartTiles=gamecontroller.getMoveSets().entrySet().stream().filter(o -> !o.getValue().isEmpty())
-                .filter(o -> gamecontroller.getPlayersDisks().contains(o.getKey().getDisk()))
-                .map(p -> p.getKey())
-                .collect(Collectors.toList());
-
-        List<Tile> opponentMoveStartTiles=gamecontroller.getMoveSets().entrySet().stream().filter(o -> !o.getValue().isEmpty())
-                .filter(o -> gamecontroller.getOpponentsDisks().contains(o.getKey().getDisk()))
-                .map(p -> p.getKey())
-                .collect(Collectors.toList());
-
-        if(playerMoveStartTiles.isEmpty() && gamecontroller.getTurn().value%2==0){
-           gamecontroller.setGameOver(true);
-            Logger.info("The game has ended.");
-
-        }
-        else if(opponentMoveStartTiles.isEmpty() && gamecontroller.getTurn().value%2==1)
-        {
-            gamecontroller.setGameOver(true);
-            Logger.info("The game has ended.");
-        }
-
-        if(gamecontroller.isGameOver() && playerMoveStartTiles.isEmpty() && gamecontroller.isTraditional())
-        {
-            XMLManager manager=new XMLManager();
-            int aliveDisks=0;
-            for(Tile tile:gamecontroller.getTiles())
+        this.gameService.getTiles().forEach( o ->{
+            if((o.getTileX()+o.getTileY())%2==0)
             {
-                if(gamecontroller.getOpponentsDisks().contains(tile.getDisk()))
-                {
-                    aliveDisks++;
-                }
-            }
-            NewRecordView view=new NewRecordView((int)(80-gamecontroller.getTurn().value)+aliveDisks*5);
-            if(manager.isHighEnough(new Record("", (int)(80-gamecontroller.getTurn().value)+aliveDisks*5))
-                    && gamecontroller.isAIstartsthegame())
-            {
-                view.getCreate().setOnAction(e ->{
-                    Record a=new Record(view.getSizeText().getText(),view.getScore());
-                    manager.addRecord(a);
-                    view.getStage().close();
-                });
+                o.setFill(Color.rgb(240,175,120));
             }
             else
             {
-                view.getCreate().setDisable(true);
+                o.setFill(Color.rgb(200,120,60));
             }
-            view.getClose().setOnAction(e ->{view.getStage().close();});
-            view.getStage().show();
-        }
-        else if(gamecontroller.isGameOver() && opponentMoveStartTiles.isEmpty() && gamecontroller.isTraditional())
-        {
-            XMLManager manager=new XMLManager();
-            int aliveDisks=0;
-            for(Tile tile:gamecontroller.getTiles())
-            {
-                if(gamecontroller.getPlayersDisks().contains(tile.getDisk()))
-                {
-                    aliveDisks++;
-                }
-            }
-            NewRecordView view=new NewRecordView((int)(80-gamecontroller.getTurn().value)+aliveDisks*5);
+            o.setX(o.getTileX()*Tile.getTilesize());
+            o.setY(o.getTileY()*Tile.getTilesize());
+            o.setWidth(Tile.getTilesize());
+            o.setHeight(Tile.getTilesize());
+            o.setCenterX(o.getTileX()*Tile.getTilesize()+Tile.getTilesize()/2);
+            o.setCenterY(o.getTileY()*Tile.getTilesize()+Tile.getTilesize()/2);
+        });
 
-            if(manager.isHighEnough(new Record("", (int)(80-gamecontroller.getTurn().value)+aliveDisks*5)) && !gamecontroller.isAIstartsthegame())
-            {
+        this.gameService.getPlayersDisks().forEach(o ->{
+            o.setCenterX(o.getStarterPos().getCenterX());
+            o.setCenterY(o.getStarterPos().getCenterY());
+            o.setFill(Color.BLACK);
+        });
 
-                view.getCreate().setOnAction(e ->{
-                    Record a=new Record(view.getSizeText().getText(),view.getScore());
-                    manager.addRecord(a);
-                    view.getStage().close();
-                });
-            }
-            else
-            {
-                view.getCreate().setDisable(true);
-            }
-            view.getClose().setOnAction(e ->{view.getStage().close();});
+        this.gameService.getOpponentsDisks().forEach(o ->{
+            o.setCenterX(o.getStarterPos().getCenterX());
+            o.setCenterY(o.getStarterPos().getCenterY());
+            o.setFill(Color.WHITE);
+        });
 
-
-            view.getStage().show();
-        }
-
-        if(gamecontroller.isGameOver()){return;}
-
-
-
-
-        /** give controls to opponent */
-
-        gamecontroller.getTurn().value++;
-
-        int i=0;
-        if(gamecontroller.isAIstartsthegame())
-        {
-            i=1;
-        }
-        if(gamecontroller.isAIagaintAI()){
-            i=gamecontroller.getTurn().value%2;
-        }
-
-        if(gamecontroller.isAIsTurn())
-        AI_Aimation(i);
-
-
+        this.gameService.getTiles().forEach(o->{
+            this.view.getTable().getChildren().add(o);
+        });
+        this.gameService.getOpponentsDisks().forEach(o ->{
+            this.view.getTable().getChildren().add(o);
+        });
+        this.gameService.getPlayersDisks().forEach(o ->{
+            this.view.getTable().getChildren().add(o);
+        });
     }
 
 
-    /**
-     * Delays the AI's moves.
-     * @param i 0 or 1 determining which player's turn is it
-     */
-    private void AI_Aimation(int i){
-        if(timeline!=null)
-            timeline.stop();
-        timeline=new Timeline();
-
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.getKeyFrames().add(
-                new KeyFrame(Duration.millis(40),
-                        new EventHandler<ActionEvent>() {
-
-                            @Override
-                            public void handle(ActionEvent t) {
-                                AnimationCounter++;
-                                if(AnimationCounter>=10 && !gamecontroller.isPause())
-                                {
-                                    timeline.stop();
-                                    AnimationCounter=0;
-                                   if(gamecontroller.AI(i))
-                                   {
-                                       refresh();
-                                       nextTurn();
-                                   }
-                                   else
-                                   {
-                                       refresh();
-                                       gamecontroller.getTurn().value--;
-                                       nextTurn();
-                                   }
-                                }
-                            }
-                        },
-                        new KeyValue[0]) // don't use binding
-        );
-
-
-        timeline.playFromStart();
-    }
 
 
 
@@ -332,10 +319,18 @@ public MainController(boolean vsai,boolean aivsai, boolean aistarts,boolean rule
         return view;
     }
 
-    public GameController getGamecontroller() {
-        return gamecontroller;
+    /**
+     * Getter of GameService.
+     * @return Returns gameService.
+     */
+    public GameService getGameService() {
+        return gameService;
     }
 
+    /**
+     * Getter of timeline.
+     * @return Returns timeline.
+     */
     public Timeline getTimeline() {
         return timeline;
     }

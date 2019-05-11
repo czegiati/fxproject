@@ -36,7 +36,7 @@ public class GameView {
      */
     public GameView(){
         eventLog.setDisable(true);
-        screen.getChildren().addAll(menubar.get(),table,eventLog);
+        screen.getChildren().addAll(menubar.get(),table);
         stage.setScene(new Scene(screen));
     }
 

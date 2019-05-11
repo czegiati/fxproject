@@ -45,23 +45,6 @@ public class Tile extends Rectangle {
     public Tile(int x,int y){
         this.TileX=x;
         this.TileY=y;
-        if((x+y)%2==0)
-        {
-            this.setFill(Color.rgb(240,175,120));
-        }
-        else
-        {
-            this.setFill(Color.rgb(200,120,60));
-        }
-
-        this.setX(x*tilesize);
-        this.setY(y*tilesize);
-        this.setWidth(tilesize);
-        this.setHeight(tilesize);
-
-        this.CenterX=x*tilesize+tilesize/2;
-        this.CenterY=y*tilesize+tilesize/2;
-        tooltip=new Tooltip("Tile:("+x+","+y+")");
     }
 
     /**
@@ -137,4 +120,26 @@ public class Tile extends Rectangle {
         return tooltip;
     }
 
+    /**
+     * Setter of tooltip.
+     * @param tooltip sets tooltip.
+     */
+    public void setTooltip(Tooltip tooltip) {
+        this.tooltip = tooltip;
+    }
+
+    /**
+     * Setter of CenterX.
+     * @param centerX Sets CenterX to this tile's center on the x axis.
+     */
+    public void setCenterX(double centerX) {
+        CenterX = centerX;
+    }
+    /**
+     * Setter of CenterY.
+     * @param centerY Sets CenterY to this tile's center on the y axis.
+     */
+    public void setCenterY(double centerY) {
+        CenterY = centerY;
+    }
 }

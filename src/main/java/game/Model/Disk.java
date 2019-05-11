@@ -16,26 +16,18 @@ public class Disk extends Circle {
      * Whether or not this piece is a king.
      */
     private boolean isDama=false;
-
+    /**
+     * The tile, the checker piece is placed on.
+     */
+    private Tile starterpos;
     /**
      * Constructor with parameters.
-     * @param x the circle's center's X coordinate
-     * @param y the circle's center's Y coordinate
-     * @param pos the tile, where the checker piece is situated in
+     * @param pos the tile, where the checker piece is situated in.
      */
-    public Disk(double x,double y,Tile pos){
-        this.setCenterX(x);
-        this.setCenterY(y);
+    public Disk(Tile pos){
+        this.starterpos=pos;
         this.setRadius(diskRange);
         this.setDisable(true);
-    }
-
-    /**
-     * Sets the range of all the circles.
-     * @param diskRange range of circle
-     */
-    public static void setDiskRange(int diskRange) {
-        Disk.diskRange = diskRange;
     }
 
     /**
@@ -51,15 +43,13 @@ public class Disk extends Circle {
      */
     public void makeIntoDama() {
         isDama=true;
-        this.setStrokeWidth(8);
-        this.setStrokeType(StrokeType.INSIDE);
-        if(this.getFill()== Color.BLACK)
-        {
-            this.setStroke(Color.rgb(40,40,40));
         }
-         else
-        {
-            this.setStroke(Color.rgb(230,230,230));
-        }
-        }
+
+    /**
+     * Getter of starterpos
+     * @return Returns the starter position of this disk
+     */
+    public Tile getStarterPos() {
+        return starterpos;
+    }
 }

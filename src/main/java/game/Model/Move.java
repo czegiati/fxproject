@@ -31,8 +31,6 @@ public class Move {
     public void execute(Tile movedTile){
        Disk a=movedTile.getDisk();
        moveTo.setDisk(a);
-       a.setCenterX(moveTo.getCenterX());
-       a.setCenterY(moveTo.getCenterY());
        movedTile.setDisk(null);
 
        if(killedIfMoved!=null)

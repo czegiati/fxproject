@@ -1,6 +1,7 @@
 package game.Controller;
 
 import game.Model.Database.XMLManager;
+import game.Model.GameService;
 import game.Model.Record;
 import game.View.GameMenuBar;
 import game.View.GameView;
@@ -28,7 +29,7 @@ public class MenuBarConroller {
     /**
      * Games main logic.
      */
-    GameController gamecontroller;
+    GameService gamecontroller;
     /**
      * The game's menubar view.
      */
@@ -43,7 +44,7 @@ public class MenuBarConroller {
     public MenuBarConroller(){
         MainController =new MainController();
         this.menubar=MainController.getView().getMenubar();
-        this.gamecontroller=MainController.getGamecontroller();
+        this.gamecontroller=MainController.getGameService();
         setUp();
         this.MainController.getView().getStage().show();
     }
@@ -82,6 +83,7 @@ public class MenuBarConroller {
                                         , Integer.parseInt(a.getSizeText().getText()));
                         this.menubar=MainController.getView().getMenubar();
                         setUp();
+                        this.gamecontroller=MainController.getGameService();
                         MainController.getView().getStage().show();
                         Logger.info("New game has been created.");
                     }

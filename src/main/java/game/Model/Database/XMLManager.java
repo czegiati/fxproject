@@ -193,7 +193,7 @@ public class XMLManager {
      */
     public boolean isHighEnough(Record record)
     {
-            if(recordList.stream().min(Comparator.comparing(Record::getScore)).get().getScore()<record.getScore() || this.recordList.size()<10 || record.getScore()>0)
+            if((recordList.stream().min(Comparator.comparing(Record::getScore)).get().getScore()<record.getScore() || this.recordList.size()<10) && record.getScore()>0)
             return true;
             else return false;
     }
