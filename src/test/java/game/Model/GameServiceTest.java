@@ -17,6 +17,7 @@ class GameServiceTest {
         Tile.setTileSize(70);
     }
 
+
     @Test
     void narrowMoveSetsToKillstrikeOptions() {
         GameService a=new GameService();

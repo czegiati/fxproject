@@ -107,54 +107,6 @@
                 <version>3.0.0</version>
             </plugin>
 
-            <!--<plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M1</version>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>3</version>
-                                </requireMavenVersion>
-                                <requireJavaVersion>
-                                    <version>[1.8.0,)</version>
-                                </requireJavaVersion>
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <phase>package</phase>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>lorant.imre.Main</mainClass>
-                                </manifest>
-                            </archive>
-                            <descriptorRefs>
-                                <descriptorRef>jar-with-dependencies</descriptorRef>
-                            </descriptorRefs>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>-->
 
             <plugin>
                 <groupId>com.atlassian.maven.plugins</groupId>
@@ -211,10 +163,6 @@
                                     <resource>records.xml</resource>
                                 </transformer>
 
-                               <!-- <transformer implementation="org.apache.maven.plugins.shade.resource.IncludeResourceTransformer">
-                                <resource>rc/main/resources/records</resource>
-                                <file>records.xml</file>
-                                </transformer>-->
                             </transformers>
                         </configuration>
                     </execution>
