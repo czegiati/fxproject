@@ -38,7 +38,7 @@ public class Tile extends Rectangle {
     private Tooltip tooltip;
 
     /**
-     * Constructor with parameters
+     * Constructor with parameters.
      * @param x column of tile
      * @param y row of tile
      */

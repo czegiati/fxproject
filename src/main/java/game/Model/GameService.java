@@ -89,11 +89,11 @@ public class GameService {
      */
     private int AnimationCounter=0;
     /**
-     * Whether or not the black player lost the game
+     * Whether or not the black player lost the game.
      */
     private boolean blackPlayerLost=false;
     /**
-     * Whether or not the white player lost the game
+     * Whether or not the white player lost the game.
      */
     private boolean whitePlayerLost=false;
 
@@ -193,7 +193,6 @@ public class GameService {
     /**
      * Simulates an event in the game.
      * @param target the tile, that have been pressed.
-     * @return whether or not a next turn can be called
      */
     public void mousePress(Tile target){
 
@@ -270,7 +269,7 @@ public class GameService {
         }
     }
     /**
-     * Sets the selectedTiles if conditions are met
+     * Sets the selectedTiles if conditions are met.
      * @param target tile to be selected
      * @param targetTiles the selectable tiles
      */
@@ -285,7 +284,7 @@ public class GameService {
 
 
     /**
-     * Changes turns, makes pieces in the right position kings, resets movesets, and ends the game,if the conditions are met
+     * Changes turns, makes pieces in the right position kings, resets movesets, and ends the game,if the conditions are met.
      */
     public void nextTurn(){
 
@@ -724,7 +723,7 @@ public class GameService {
 
 
     /**
-     * delays the AI's moves
+     * delays the AI's moves.
      * @param i 0 or 1 determining which player's turn is it
      */
     private void AI_Aimation(int i){

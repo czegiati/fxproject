@@ -21,6 +21,9 @@ import org.pmw.tinylog.Logger;
 
 import java.util.ArrayList;
 
+/**
+ * Main controller of the game, visually updates the game elements.
+ */
 public class MainController {
     /**
      * Main view of the game.
@@ -37,7 +40,7 @@ public class MainController {
 
 
     /**
-     * Constructor without parameters
+     * Constructor without parameters.
      */
     public MainController(){
         Tile.setTileSize(70);

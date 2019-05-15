@@ -32,7 +32,7 @@ public class Disk extends Circle {
 
     /**
      * isDama's getter.
-     * @return true if piece is a king
+     * @return true if piece is a king.
      */
     public boolean isDama() {
         return isDama;
@@ -46,7 +46,7 @@ public class Disk extends Circle {
         }
 
     /**
-     * Getter of starterpos
+     * Getter of starterpos.
      * @return Returns the starter position of this disk
      */
     public Tile getStarterPos() {

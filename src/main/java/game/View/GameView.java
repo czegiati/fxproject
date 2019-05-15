@@ -71,9 +71,11 @@ public class GameView {
     public Stage getStage() {
         return stage;
     }
-/**
- * Setter of the main stage of the game.
- */
+
+    /**
+     * Setter of the main stage of the game.
+     * @param stage Stage of the game's main window.
+     */
     public void setStage(Stage stage) {
         table=new Group();
         screen = new VBox();

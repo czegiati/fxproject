@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Controls the game's menubar
+ * Controls the game's menubar.
  */
 public class MenuBarConroller {
     /**
@@ -39,7 +39,7 @@ public class MenuBarConroller {
      */
     MainController MainController;
     /**
-     * Constructor without parameters parameters
+     * Constructor without parameters parameters.
      */
     public MenuBarConroller(){
         MainController =new MainController();
@@ -50,7 +50,7 @@ public class MenuBarConroller {
     }
 
     /**
-     * Configures the menus on the menubar
+     * Configures the menus on the menubar.
      */
     public void setUp(){
         menubar.getNewGame().setOnAction(e ->{
@@ -174,7 +174,7 @@ public class MenuBarConroller {
     }
 
     /**
-     * Forces the textfield parameter to only accept numeric characters
+     * Forces the textfield parameter to only accept numeric characters.
      * @param event pressed  event key's code
      * @param textfield the text field that needs to be configured
      */
@@ -187,6 +187,10 @@ public class MenuBarConroller {
         }
     }
 
+    /**
+     * Getter of the MainController's view.
+     * @return Returns view of the main controller.
+     */
     public GameView getView(){
         return MainController.getView();
     }
