@@ -174,6 +174,7 @@ public class GameService {
         Logger.info("Gameboard has been created.");
     }
 
+
     /**
      * Pauses the game if AI playing against AI.
      */
