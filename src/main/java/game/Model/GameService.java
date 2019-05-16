@@ -435,7 +435,7 @@ public class GameService {
      * Generates the moves the player can make from the given tile.
      * @param tile the tile we want to generate the movements for
      */
-    private void setMoveSets(Tile tile)
+    public void setMoveSets(Tile tile)
     {
         moveSets.put(tile,new ArrayList<>());
 

@@ -2,6 +2,7 @@ package game.Model;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.pmw.tinylog.Logger;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -15,6 +16,63 @@ class GameServiceTest {
     @BeforeEach
     void setUp(){
         Tile.setTileSize(70);
+    }
+
+
+    @Test
+    void setMoveSets(){
+        GameService a=new GameService(false,false,false,false,false,8);
+        Tile t=a.getTiles().stream().filter(o -> o.getDisk()==null).findFirst().get();
+        a.setMoveSets(t);
+        assertTrue(a.getMoveSets().get(t).size()==0);
+
+        Tile t2=a.get(0,2);
+        a.setMoveSets(t2);
+        assertTrue(a.getMoveSets().get(t2).size()==1);
+
+
+        Tile t3=a.get(2,2);
+        a.setMoveSets(t3);
+        assertTrue(a.getMoveSets().get(t3).size()==2);
+
+
+
+        Tile t4=a.get(1,5);
+        a.setMoveSets(t4);
+        assertTrue(a.getMoveSets().get(t4).size()==2);
+
+        Tile t5=a.get(7,5);
+        a.setMoveSets(t5);
+        assertTrue(a.getMoveSets().get(t5).size()==1);
+
+        a.mousePress(a.get(7,5));
+        a.mousePress(a.get(6,4));
+
+        a.mousePress(a.get(4,2));
+        a.mousePress(a.get(5,3));
+
+        a.mousePress(a.get(6,4));
+        assertTrue(a.getMoveSets().get(a.get(6,4)).size()==2);
+
+        a.get(6,4).getDisk().makeIntoDama();
+        a.setMoveSets(a.get(6,4));
+        a.mousePress(a.get(6,4));
+        assertTrue(a.getMoveSets().get(a.get(6,4)).size()==3);
+    }
+
+
+    @Test
+    void Pause(){
+        GameService a=new GameService(true,true,false,false,false,8);
+        assertFalse(a.isPause());
+        a.Pause();
+        assertTrue(a.isPause());
+
+
+        GameService b=new GameService();
+        assertFalse(b.isPause());
+        b.isPause();
+        assertFalse(b.isPause());
     }
 
 
